@@ -186,11 +186,11 @@ namespace SAPHRON
 			if(this->Flags.particle_species)
 				WriteStream(*fs, "Species");
 			if(this->Flags.particle_species_id)
-				WriteStream(*fs, "Species ID");
+				WriteStream(*fs, "Species_ID");
 			if(this->Flags.particle_parent_id)
-				WriteStream(*fs, "Parent ID");
+				WriteStream(*fs, "Parent_ID");
 			if(this->Flags.particle_parent_species) 
-				WriteStream(*fs, "Parent Species");
+				WriteStream(*fs, "Parent_Species");
 			if(this->Flags.particle_charge)
 				WriteStream(*fs, "Charge");
 			if(this->Flags.particle_position)

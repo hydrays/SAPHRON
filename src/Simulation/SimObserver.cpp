@@ -84,8 +84,10 @@ namespace SAPHRON
 	void SimObserver::Update(const SimEvent& e)
 	{
 		// Only lock and proceed if we have to.
+		//printf("%s\n", "arrived here [0]");
 		if(e.GetIteration() % _frequency == 0 || e.ForceObserve())
 		{
+			printf("%s\n", "arrived here [1]");
 			_mutex.lock();
 			_event = e;
 			PreVisit();
