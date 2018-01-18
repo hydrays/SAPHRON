@@ -91,8 +91,7 @@ namespace SAPHRON
 		{
 			auto& pos = particle->GetPosition();
 			particle->SetPosition(pos[0] + _dx*(_rand.doub()-0.5), 
-								  pos[1] + _dx*(_rand.doub()-0.5), 
-								  pos[2] + _dx*(_rand.doub()-0.5));
+								  pos[1] + _dx*(_rand.doub()-0.5));
 			++_performed;
 		}
 
@@ -134,8 +133,7 @@ namespace SAPHRON
 
 			// Generate new position then apply periodic boundaries.
 			Position newPos({posi[0] + dx*(_rand.doub()-0.5), 
-							 posi[1] + dx*(_rand.doub()-0.5), 
-							 posi[2] + dx*(_rand.doub()-0.5)});
+							 posi[1] + dx*(_rand.doub()-0.5)});
 			
 			w->ApplyPeriodicBoundaries(&newPos);
 			particle->SetPosition(newPos);
@@ -206,8 +204,7 @@ namespace SAPHRON
 
 			// Generate new position then apply periodic boundaries.
 			Position newPos({posi[0] + dx*(_rand.doub()-0.5), 
-							 posi[1] + dx*(_rand.doub()-0.5), 
-							 posi[2] + dx*(_rand.doub()-0.5)});
+							 posi[1] + dx*(_rand.doub()-0.5)});
 			
 			w->ApplyPeriodicBoundaries(&newPos);
 			particle->SetPosition(newPos);

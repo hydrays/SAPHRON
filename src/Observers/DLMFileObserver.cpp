@@ -116,14 +116,8 @@ namespace SAPHRON
 				WriteStream(*_worldfs.back(), "Pxx");
 			if(this->Flags.pxy)
 				WriteStream(*_worldfs.back(), "Pxy");
-			if(this->Flags.pxz)
-				WriteStream(*_worldfs.back(), "Pxz");
 			if(this->Flags.pyy)
 				WriteStream(*_worldfs.back(), "Pyy");
-			if(this->Flags.pyz)
-				WriteStream(*_worldfs.back(), "Pyz");
-			if(this->Flags.pzz)
-				WriteStream(*_worldfs.back(), "Pzz");
 			if(this->Flags.ptail)
 				WriteStream(*_worldfs.back(), "P tail");
 			if(this->Flags.world_volume)
@@ -197,13 +191,11 @@ namespace SAPHRON
 			{
 				WriteStream(*fs, "x");
 				WriteStream(*fs, "y");
-				WriteStream(*fs, "z");
 			}
 			if(this->Flags.particle_director)
 			{
 				WriteStream(*fs, "ux");
 				WriteStream(*fs, "uy");
-				WriteStream(*fs, "uz");
 			}
 
 			*fs << endl;
@@ -358,14 +350,8 @@ namespace SAPHRON
 				WriteStream(*_worldfs.back(), P.pxx);
 			if(this->Flags.pxy)
 				WriteStream(*_worldfs.back(), P.pxy);
-			if(this->Flags.pxz)
-				WriteStream(*_worldfs.back(), P.pxz);
 			if(this->Flags.pyy)
 				WriteStream(*_worldfs.back(), P.pyy);
-			if(this->Flags.pyz)
-				WriteStream(*_worldfs.back(), P.pyz);
-			if(this->Flags.pzz)
-				WriteStream(*_worldfs.back(), P.pzz);
 			if(this->Flags.ptail)
 				WriteStream(*_worldfs.back(), P.ptail);
 			if(this->Flags.world_volume)
@@ -454,7 +440,6 @@ namespace SAPHRON
 			*fs << scientific; 
 			WriteStream(*fs, pos[0]);
 			WriteStream(*fs, pos[1]);
-			WriteStream(*fs, pos[2]);
 			*fs << fixed;
 		}
 		if(this->Flags.particle_director) 
@@ -463,7 +448,6 @@ namespace SAPHRON
 			*fs << scientific; 
 			WriteStream(*fs, dir[0]);
 			WriteStream(*fs, dir[1]);
-			WriteStream(*fs, dir[2]);
 			*fs << fixed;		
 		}
 

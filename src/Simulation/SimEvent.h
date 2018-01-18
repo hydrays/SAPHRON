@@ -81,10 +81,7 @@ namespace SAPHRON
 					unsigned int pideal : 1;
 					unsigned int pxx: 1;
 					unsigned int pxy: 1;
-					unsigned int pxz: 1;
 					unsigned int pyy: 1;
-					unsigned int pyz: 1;
-					unsigned int pzz: 1;
 					unsigned int ptail: 1;
 				};
 			
@@ -167,9 +164,7 @@ namespace SAPHRON
 					if(pideal) json["pressure_ideal"] = 1;
 					if(pxx) json["pressure_pxx"] = 1;
 					if(pxy) json["pressure_pxy"] = 1;
-					if(pxz) json["pressure_pxz"] = 1;
 					if(pyy) json["pressure_pyy"] = 1;
-					if(pyz) json["pressure_pyz"] = 1;
 					if(ptail) json["pressure_tail"] = 1;
 				}
 

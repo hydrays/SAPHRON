@@ -38,8 +38,8 @@ namespace SAPHRON
 		public:
 			DLSAConnectivity(const World& world, double coeff, DirectorFunc dfunc, PFilterFunc pfunc) :
 				_groupMap(), _idmap(), _Qmats(0), _tmpVec(arma::fill::zeros), _groupCounts(0), 
-				_eigval(3, arma::fill::zeros), _eigvec(3,3,arma::fill::zeros), _imax(0), _dfunc(dfunc), 
-				_dir({ 0.0, 0.0, 0.0 }), _coeff(coeff),  _pfunc(pfunc)
+				_eigval(2, arma::fill::zeros), _eigvec(2,2,arma::fill::zeros), _imax(0), _dfunc(dfunc), 
+				_dir({ 0.0, 0.0 }), _coeff(coeff),  _pfunc(pfunc)
 			{
 				std::vector<int> _groupVec(0);
 
@@ -54,7 +54,7 @@ namespace SAPHRON
 					if(loc == std::end(_groupVec))
 					{
 						_groupVec.push_back(group);
-						_Qmats.push_back(arma::mat(3,3, arma::fill::zeros));
+						_Qmats.push_back(arma::mat(2,2, arma::fill::zeros));
 						_groupCounts.push_back(0);
 						loc = std::find(std::begin(_groupVec),std::end(_groupVec), group);
 					}
@@ -64,7 +64,7 @@ namespace SAPHRON
 					auto& dir = particle->GetDirector();
 					_tmpVec = dir;
 
-					_Qmats[index] += arma::kron(_tmpVec.t(), _tmpVec) - 1.0/3.0*arma::eye(3,3);
+					_Qmats[index] += arma::kron(_tmpVec.t(), _tmpVec) - 1.0/2.0*arma::eye(2,2);
 					_groupCounts[index]++;
 					_groupMap.insert(std::pair<int,int>(id, index));
 					_idmap.insert(std::pair<int, arma::vec>(id, _tmpVec));
@@ -72,7 +72,7 @@ namespace SAPHRON
 
 				// Average
 				for (int i = 0; i < (int)_Qmats.size(); ++i)
-					_Qmats[i] *= 3.0/(2.0*_groupCounts[i]);			
+					_Qmats[i] *= 1.0/_groupCounts[i];			
 			}
 
 			// Evaluate Hamiltonian.
@@ -117,7 +117,7 @@ namespace SAPHRON
 
 				_tmpVec = dir;
 				
-				_Qmats[index] += 3.0 / (2.0*_groupCounts[index])*(arma::kron(_tmpVec.t(), _tmpVec) - arma::kron(prevDir.t(), prevDir));
+				_Qmats[index] += 2.0 / (2.0*_groupCounts[index])*(arma::kron(_tmpVec.t(), _tmpVec) - arma::kron(prevDir.t(), prevDir));
 				prevDir = _tmpVec;
 			}
 	};

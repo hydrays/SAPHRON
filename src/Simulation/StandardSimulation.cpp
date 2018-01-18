@@ -4,11 +4,15 @@ namespace SAPHRON
 {
 	inline void StandardSimulation::Iterate()
 	{
+
+		//printf("inside standardsimulation->iterate: 00\n");
+
 		_mmanager->ResetMoveAcceptances();
 		
 		// Select random move and perform.
 		for(int i = 0; i < GetMovesPerIteration(); ++i)
 		{
+			//printf("inside standardsimulation->iterate: 01\n");
 			auto* move = _mmanager->SelectRandomMove();
 			move->Perform(_wmanager, _ffmanager, MoveOverride::None);
 		}

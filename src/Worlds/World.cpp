@@ -244,21 +244,20 @@ namespace SAPHRON
 
 		// New volume.
 		double vn = (double)n/density;
-		_H *= std::cbrt(vn/GetVolume());
+		_H *= std::sqrt(vn/GetVolume());
 
 		// Get corresponding box size.
-		double L = std::cbrt(vn);
+		double L = std::sqrt(vn);
 
 		// Find the lowest perfect cube greater than or equal to the number of particles.
 		int nCube = 2;
-		while(pow(nCube, 3) < n)
+		while(pow(nCube, 2) < n)
 			++nCube;
 
 		// Coordinates.
 		int x = 0;
 		int y = 0;
-		int z = 0;
-
+		
 		// Assign particle positions.
 		for (int i = 0; i < n; ++i)
 		{
@@ -267,7 +266,7 @@ namespace SAPHRON
 				{
 					Particle* pnew = particles[j]->Clone();
 					double mult = (L/nCube);
-					Position pos = {mult*(x+0.5),mult*(y+0.5),mult*(z+0.5)};
+					Position pos = {mult*(x+0.5),mult*(y+0.5)};
 					pnew->SetPosition(pos);
 					AddParticle(pnew, false); // Update neighborlist later.
 					--counts[j];
@@ -275,13 +274,9 @@ namespace SAPHRON
 				}
 
 			if(++x == nCube)
-			{	
+			{
 				x = 0;
-				if(++y == nCube)
-				{
-					y = 0;
-					++z;
-				}
+				++y;
 			}
 		}
 
@@ -322,11 +317,8 @@ namespace SAPHRON
 		// Loop though and initialize
 		double x = 1;
 		double y = 1;
-		double z = 1;
 		for(int i = 0; i < GetVolume(); i++)
 		{
-			if(z > _H(2,2))
-				z = 1.0;
 			if(y > _H(1,1))
 				y = 1.0;
 			if(x > _H(0,0))
@@ -336,16 +328,16 @@ namespace SAPHRON
 				if(counts[j] > 0 )
 				{
 					Particle* pnew = particles[j]->Clone();
-					pnew->SetPosition({x,y,z});
+					pnew->SetPosition({x,y});
 					AddParticle(pnew, false);
 					--counts[j];
 					break;
 				}
 
 			// Increment counters.
-			x += floor((y + z) / (round(_H(2,2)) + round(_H(1,1))));
-			y += floor(z / round(_H(2,2)));
-			z += 1.0;
+			//x += floor((y + z) / (round(_H(2,2)) + round(_H(1,1))));
+			x += floor(y / round(_H(1,1)));
+			y += 1.0;
 
 			if(max != 0 && i >= max - 1)
 				return;
@@ -356,25 +348,22 @@ namespace SAPHRON
 
 	void World::SetVolume(double v, bool scale)
 	{
-		auto l = pow(v, 1.0/3.0);
+		auto l = pow(v, 1.0/2.0);
 
 		if(scale)
 		{
 			auto xs = l/_H(0,0);
 			auto ys = l/_H(1,1);
-			auto zs = l/_H(2,2);
 
 			_H(0,0) = l;
 			_H(1,1) = l;
-			_H(2,2) = l;
-
+			
 			#pragma omp parallel for schedule(static)
 			for(auto it = _particles.begin(); it < _particles.end(); ++it)
 			{
 				auto pos = (*it)->GetPosition();
 				pos[0] *= xs;
 				pos[1] *= ys;
-				pos[2] *= zs;
 				ApplyPeriodicBoundaries(&pos);
 				(*it)->SetPosition(pos);
 			}
@@ -384,7 +373,6 @@ namespace SAPHRON
 		{
 			_H(0,0) = l;
 			_H(1,1) = l;
-			_H(2,2) = l;
 
 			#pragma omp parallel for schedule(static)
 			for(auto it = _particles.begin(); it < _particles.end(); ++it)
@@ -408,12 +396,10 @@ namespace SAPHRON
 		const auto& box = this->GetHMatrix();
 		json["dimensions"][0] = box(0,0);
 		json["dimensions"][1] = box(1,1);
-		json["dimensions"][2] = box(2,2);
 
 		// Serialize periodicity. 
 		json["periodic"]["x"] = this->GetPeriodicX();
 		json["periodic"]["y"] = this->GetPeriodicY();
-		json["periodic"]["z"] = this->GetPeriodicZ();
 
 		json["seed"] = this->GetSeed();
 		json["skin_thickness"] = this->GetSkinThickness();
@@ -486,8 +472,7 @@ namespace SAPHRON
 			throw BuildException(validator.GetErrors());
 
 		Position dim{json["dimensions"][0].asDouble(), 
-					 json["dimensions"][1].asDouble(),
-					 json["dimensions"][2].asDouble()};
+					 json["dimensions"][1].asDouble()};
 
 		// Neighbor list cutoff check.
 		double ncut = json["nlist_cutoff"].asDouble();
@@ -505,7 +490,7 @@ namespace SAPHRON
 		auto maxi = std::numeric_limits<int>::max();
 		auto seed = json.get("seed", rd() % maxi).asUInt();
 
-		world = new World(dim[0], dim[1], dim[2], ncut, skin, seed);
+		world = new World(dim[0], dim[1], ncut, skin, seed);
 		if(ncut)
 			world->SetNeighborRadius(ncut);
 		
@@ -515,11 +500,9 @@ namespace SAPHRON
 		{
 			periodx = json["periodic"].get("x", true).asBool();
 			periody = json["periodic"].get("y", true).asBool();
-			periodz = json["periodic"].get("z", true).asBool();
 		}
 		world->SetPeriodicX(periodx);
 		world->SetPeriodicY(periody);
-		world->SetPeriodicZ(periodz);			
 
 		// Initialize particles.
 		if(json.isMember("particles"))

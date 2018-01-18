@@ -157,12 +157,12 @@ namespace SAPHRON
 	    {
 	    	auto coords = p->GetPosition();
 	    	cout << fixed << setw(14) << setprecision(5) << left 
-	    		 << coords.x  << setw(14) <<  coords.y << setw(14) << coords.z;
+	    		 << coords.x  << setw(14) <<  coords.y <<;
 		}
 		if (this->Flags.particle_director)
 	    {
 	    	auto& dir = p->GetDirector();
-	    	cout << left << setw(14) << dir.x << setw(14)  << dir.y << setw(14) << dir.z;
+	    	cout << left << setw(14) << dir.x << setw(14)  << dir.y;
 	    }
 		if (this->Flags.particle_neighbors)
 	    {

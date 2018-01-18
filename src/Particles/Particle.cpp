@@ -174,13 +174,11 @@ namespace SAPHRON
 		std::string species = particles[1].asString();
 		std::string component = particles[2].asString();
 		Position pos{particles[3][0].asDouble(), 
-					 particles[3][1].asDouble(), 
-					 particles[3][2].asDouble()};
+					 particles[3][1].asDouble()};
 		Director dir;
 		if(particles.size() > 4)
 			dir = {particles[4][0].asDouble(), 
-				   particles[4][1].asDouble(), 
-				   particles[4][2].asDouble()};
+				   particles[4][1].asDouble()};
 
 		// Check that we have a proper blueprint.
 		if(blueprints.isMember(species) && blueprints[species].isMember("children"))
@@ -331,10 +329,10 @@ namespace SAPHRON
 		{
 			int id = p[0].asInt();
 			std::string species = p[1].asString();
-			Position pos{p[2][0].asDouble(), p[2][1].asDouble(), p[2][2].asDouble()};
+			Position pos{p[2][0].asDouble(), p[2][1].asDouble()};
 			Director dir;
 			if(p.size() > 3)
-				dir = {p[3][0].asDouble(), p[3][1].asDouble(), p[3][2].asDouble()};
+				dir = {p[3][0].asDouble(), p[3][1].asDouble()};
 
 			// Create the particle.
 			Particle* particle = new Particle(pos, dir, species);

@@ -38,10 +38,7 @@ namespace SAPHRON
 		flags.pideal = json.get("pressure_ideal", 0).asUInt();
 		flags.pxx = json.get("pressure_pxx", 0).asUInt();
 		flags.pxy = json.get("pressure_pxy", 0).asUInt();
-		flags.pxz = json.get("pressure_pxz", 0).asUInt();
 		flags.pyy = json.get("pressure_pyy", 0).asUInt();
-		flags.pyz = json.get("pressure_pyz", 0).asUInt();
-		flags.pzz = json.get("pressure_pzz", 0).asUInt();
 		flags.ptail = json.get("pressure_tail", 0).asUInt();
 		flags.hist_interval = json.get("hist_interval", 0).asUInt();
 		flags.hist_bin_count = json.get("hist_bin_count", 0).asUInt();

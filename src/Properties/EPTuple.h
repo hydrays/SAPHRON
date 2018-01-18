@@ -15,9 +15,9 @@ namespace SAPHRON
 		EPTuple(double intervdw, double intravdw, double interelect, double intraelect, 
 				double bonded, double connectivity, double constraint, double tail,
 				double etail, double pideal, double pxx, double pxy, 
-				double pxz, double pyy, double pyz, double pzz, double ptail) : 
+				double pyy, double ptail) : 
 		energy{intervdw, intravdw, interelect, intraelect, bonded, connectivity, constraint, tail, etail}, 
-		pressure{pideal, pxx, pxy, pxz, pyy, pyz, pzz, ptail}{}
+		pressure{pideal, pxx, pxy, pyy, ptail}{}
 
 		inline EPTuple& operator+=(const EPTuple& rhs)
 		{

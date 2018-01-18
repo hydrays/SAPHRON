@@ -159,12 +159,12 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateInterEnergy(const Particle& particle) const
 	{
+		//printf("inside ForceFieldManager->EvaluateInerEnergy: 00-0\n");
 		if(_nonbondedforcefields.empty())
 			return EPTuple();
 
 		double intere = 0, electroe = 0, pxx = 0, 
-		       pxy = 0, pxz = 0, pyy = 0, pyz = 0, 
-			   pzz = 0, recipro = 0;
+		       pxy = 0, pyy = 0, recipro = 0;
 
 		// Begin timer.
 		auto& sim = SimInfo::Instance();
@@ -179,7 +179,7 @@ namespace SAPHRON
 			auto n = neighbors.size();
 
 			#ifdef PARALLEL_INTER
-			#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pxz,pyy,pyz,pzz) if(n >= MIN_INTER_NEIGH)
+			#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pyy) if(n >= MIN_INTER_NEIGH)
 			#endif
 			for(size_t k = 0; k < n; ++k)
 			{
@@ -233,13 +233,10 @@ namespace SAPHRON
 				
 				pxx += totalvirial * rij[0] * rab[0];
 				pyy += totalvirial * rij[1] * rab[1];
-				pzz += totalvirial * rij[2] * rab[2];
-				pxy += totalvirial * 0.5 * (rij[0] * rab[1] + rij[1] * rab[0]);
-				pxz += totalvirial * 0.5 * (rij[0] * rab[2] + rij[2] * rab[0]);
-				pyz += totalvirial * 0.5 * (rij[1] * rab[2] + rij[2] * rab[1]);				
+				pxy += totalvirial * 0.5 * (rij[0] * rab[1] + rij[1] * rab[0]);			
 			}
 		}
-		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, recipro, 0, -pxx, -pxy, -pxz, -pyy, -pyz, -pzz, 0};				
+		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, recipro, 0, -pxx, -pxy, -pyy, 0};				
 		
 		// End timer.
 		sim.AddTime("e_inter");
@@ -256,6 +253,7 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateInterEnergy(const World& world) const
 	{
+		//printf("inside ForceFieldManager->EvaluateInterEnergy: 00-0\n");
 		EPTuple ep; 
 		for(auto& particle : world)
 			ep += EvaluateInterEnergy(*particle);
@@ -271,6 +269,7 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateIntraEnergy(const World& world) const
 	{
+		//printf("inside ForceFieldManager->EvaluateIntraEnergy: 00-0\n");
 		EPTuple ep; 
 		for(auto& particle : world)
 			ep += EvaluateIntraEnergy(*particle);
@@ -280,6 +279,8 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateIntraEnergy(const Particle& particle) const
 	{
+		//printf("inside ForceFieldManager->EvaluateIntraEnergy: 00-0\n");
+
 		EPTuple ep;
 
 		// Begin timer.
@@ -364,26 +365,32 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateTailEnergy(const World& world) const
 	{
+		//printf("inside ForceFieldManager->EvaluateTailEnergy: 00-0\n");
 		auto& comp = world.GetComposition();
 		auto wid = world.GetID();
 		auto volume = world.GetVolume();
 		EPTuple ep;
 
+		//printf("inside ForceFieldManager->EvaluateTailEnergy: 00-0-0.5\n");
 		for(auto& it : _nonbondedforcefields)
 		{
 			const auto& pair = it.first;
 			const auto& ff = it.second;
+			//printf("inside ForceFieldManager->EvaluateTailEnergy: 00-0-0\n");
 
 			// Get species compositions.
 			auto na = comp[pair.first];
 			auto nb = comp[pair.second];
+			//printf("inside ForceFieldManager->EvaluateTailEnergy: 00-0-1\n");
 
 			ep.energy.tail += 2.0*M_PI*na*nb*ff->EnergyTailCorrection(wid);
 			ep.pressure.ptail += 2.0/3.0*M_PI*na*nb*ff->PressureTailCorrection(wid);
+			//printf("inside ForceFieldManager->EvaluateTailEnergy: 00-0-2\n");
 		}
 
 		ep.energy.tail /= volume;
 		ep.pressure.ptail /= volume*volume;
+		//printf("inside ForceFieldManager->EvaluateTailEnergy: 00-1\n");
 
 		return ep;
 	}
@@ -448,7 +455,9 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateEnergy(const World& world) const
 	{
+		//printf("inside ForceFieldManager->EvaluateEnergy: 00-0\n");
 		auto e = EvaluateInterEnergy(world) + EvaluateIntraEnergy(world) + EvaluateTailEnergy(world);
+		//printf("inside ForceFieldManager->EvaluateEnergy: 00-1\n");
 		e.energy.constraint = EvaluateConstraintEnergy(world);
 		return e;
 	}

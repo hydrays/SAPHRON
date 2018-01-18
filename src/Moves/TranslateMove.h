@@ -89,14 +89,15 @@ namespace SAPHRON
 		{
 			auto& pos = particle->GetPosition();
 			particle->SetPosition(pos[0] + _dx*(_rand.doub()-0.5), 
-								  pos[1] + _dx*(_rand.doub()-0.5), 
-								  pos[2] + _dx*(_rand.doub()-0.5));
+								  pos[1] + _dx*(_rand.doub()-0.5));
 			++_performed;
 		}
 
 		// Perform translation on a random particle from a random world.
 		virtual void Perform(WorldManager* wm, ForceFieldManager* ffm, const MoveOverride& override) override
 		{
+			//printf("inside move->perform: 00\n");
+
 			// Get random particle from random world.
 			World* w = wm->GetRandomWorld();
 			if(w->GetParticleCount() == 0)
@@ -133,8 +134,7 @@ namespace SAPHRON
 
 			// Generate new position then apply periodic boundaries.
 			Position newPos({posi[0] + dx*(_rand.doub()-0.5), 
-							 posi[1] + dx*(_rand.doub()-0.5), 
-							 posi[2] + dx*(_rand.doub()-0.5)});
+							 posi[1] + dx*(_rand.doub()-0.5)});
 			
 			w->ApplyPeriodicBoundaries(&newPos);
 			particle->SetPosition(newPos);
@@ -143,6 +143,7 @@ namespace SAPHRON
 			// Update neighbor list if needed.
 			w->CheckNeighborListUpdate(particle);						
 
+			//printf("inside move->perform: 01\n");
 			// Evaluate final particle energy and get delta E. 
 			auto ef = ffm->EvaluateInterEnergy(*particle);
 			ef.energy.constraint = ffm->EvaluateConstraintEnergy(*w);
@@ -154,6 +155,8 @@ namespace SAPHRON
 			// Acceptance probability.
 			double p = exp(-de.total()/(w->GetTemperature()*sim.GetkB()));
 			p = p > 1.0 ? 1.0 : p;
+
+			//printf("inside move->perform: 02\n");
 
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
@@ -210,8 +213,7 @@ namespace SAPHRON
 
 			// Generate new position then apply periodic boundaries.
 			Position newPos({posi[0] + dx*(_rand.doub()-0.5), 
-							 posi[1] + dx*(_rand.doub()-0.5), 
-							 posi[2] + dx*(_rand.doub()-0.5)});
+							 posi[1] + dx*(_rand.doub()-0.5)});
 			
 			w->ApplyPeriodicBoundaries(&newPos);
 			particle->SetPosition(newPos);

@@ -23,7 +23,7 @@ namespace SAPHRON
 			{
 				auto& dir = p.GetDirector();
 				double dot = arma::dot(_dir, dir);
-				return -1*_coeff*(1.5*dot*dot - 0.5);
+				return -1*_coeff*(dot*dot - 0.5);
 			}
 			
 	};

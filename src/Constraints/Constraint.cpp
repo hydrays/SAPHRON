@@ -42,8 +42,7 @@ namespace SAPHRON
 			auto coeff = json["coefficient"].asDouble();
 			Director dir{
 				json["director"][0].asDouble(), 
-				json["director"][1].asDouble(),
-				json["director"][2].asDouble()};
+				json["director"][1].asDouble()};
 
 			auto index = json["index"].asInt();
 

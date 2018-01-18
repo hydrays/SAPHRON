@@ -46,8 +46,8 @@ namespace SAPHRON
 		double EvaluateOrderParameter(const World& w) const override
 		{
 			// Compute COM of each group.
-			Position pos1{0,0,0};
-			Position periodic{0,0,0}; 
+			Position pos1{0,0};
+			Position periodic{0,0}; 
 			auto m1 = 0.;
 
 			for(auto& p : _group1)

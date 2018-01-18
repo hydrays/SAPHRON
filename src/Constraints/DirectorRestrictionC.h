@@ -28,9 +28,9 @@ namespace SAPHRON
 		std::array<double, 2> _lim;
 
 		// Q tensor and associated eigvec/vals.
-		Matrix3D _Q;
-		arma::cx_colvec3 _eigval;
-		arma::cx_mat33 _eigvec; 
+		Matrix2D _Q;
+		arma::cx_colvec2 _eigval;
+		arma::cx_mat22 _eigvec; 
 		arma::uword _imax; 
 
 		// Particle count for averaging.
@@ -45,12 +45,8 @@ namespace SAPHRON
 					if(pos[0] < _lim[0] || pos[0] > _lim[1])
 						return false;
 					break;
-				case 1:
-					if(pos[1] < _lim[0] || pos[1] > _lim[1])
-						return false;
-					break;
 				default:
-					if(pos[2] < _lim[0] || pos[2] > _lim[1])
+					if(pos[1] < _lim[0] || pos[1] > _lim[1])
 						return false;
 					break;
 			}
@@ -94,12 +90,12 @@ namespace SAPHRON
 				{
 					++_pcount;
 					auto& u = p->GetDirector();
-					_Q += kron(u.t(), u) - 1.0/3.0*eye(3,3);
+					_Q += kron(u.t(), u) - 1.0/2.0*eye(2,2);
 				}
 			}
 
 			// Average
-			_Q *= 3.0/(2.0*_pcount);
+			_Q *= 2.0/(2.0*_pcount);
 			UpdateQTensor();
 		}
 
@@ -107,11 +103,10 @@ namespace SAPHRON
 		{
 			double dot = (
 				_eigvec(0, _imax).real()*_dir[0] + 
-				_eigvec(1, _imax).real()*_dir[1] + 
-				_eigvec(2, _imax).real()*_dir[2]
+				_eigvec(1, _imax).real()*_dir[1]
 			);
 
-			return -1.0*_coeff*(1.5*dot*dot - 0.5);
+			return -1.0*_coeff*(dot*dot - 0.5);
 		}
 
 		// Update Q tensor on particle director change.
@@ -129,7 +124,7 @@ namespace SAPHRON
 			if(pEvent.director && IsInRegion(pos))
 			{
 				auto& pdir = pEvent.GetOldDirector();
-				_Q += 3.0/(2.0*_pcount)*(kron(dir.t(), dir) - kron(pdir.t(), pdir));
+				_Q += 2.0/(2.0*_pcount)*(kron(dir.t(), dir) - kron(pdir.t(), pdir));
 				UpdateQTensor();
 				return;
 			}
@@ -148,7 +143,7 @@ namespace SAPHRON
 					_Q *= _pcount/(_pcount + 1.);
 					++_pcount;
 
-					_Q += 3.0/(2.0*_pcount)*(kron(dir.t(), dir) - 1.0/3.0*eye(3,3));
+					_Q += 2.0/(2.0*_pcount)*(kron(dir.t(), dir) - 1.0/2.0*eye(2,2));
 					UpdateQTensor();
 				}
 				else if(IsInRegion(ppos) && !IsInRegion(pos))
@@ -156,7 +151,7 @@ namespace SAPHRON
 					_Q *= _pcount/(_pcount - 1.);
 					--_pcount;
 
-					_Q -= 3.0/(2.0*_pcount)*(kron(dir.t(), dir) - 1.0/3.0*eye(3,3));
+					_Q -= 2.0/(2.0*_pcount)*(kron(dir.t(), dir) - 1.0/2.0*eye(2,2));
 					UpdateQTensor();
 				}
 			}			
@@ -168,7 +163,6 @@ namespace SAPHRON
 			json["coefficient"] = _coeff;
 			json["director"][0] = _dir[0];
 			json["director"][1] = _dir[1];
-			json["director"][2] = _dir[2];
 			json["index"] = _index;
 			json["limits"][0] = _lim[0];
 			json["limits"][1] = _lim[1];

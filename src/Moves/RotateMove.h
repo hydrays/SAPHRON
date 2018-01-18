@@ -30,7 +30,7 @@ namespace SAPHRON
 		}
 
 		// Rotate a particle and children given a rotation matrix R.
-		void Rotate(Particle* particle, const Matrix3D& R)
+		void Rotate(Particle* particle, const Matrix2D& R)
 		{
 			// First rotate particle director.
 			particle->SetDirector(R*particle->GetDirector());
@@ -48,9 +48,9 @@ namespace SAPHRON
 
 		// Roate a particle about an axis (x = 1, y = 2, z = 3) 
 		// "deg" degrees
-		void Rotate(Particle* particle, int axis, double deg)
+		void Rotate(Particle* particle, double deg)
 		{
-			Matrix3D R = GenRotationMatrix(axis, deg);
+			Matrix2D R = GenRotationMatrix(deg);
 			Rotate(particle, R);
 		}
 
@@ -68,9 +68,8 @@ namespace SAPHRON
 			ei.energy.constraint = w->GetEnergy().constraint;
 
 			// Choose random axis, and generate random angle.
-			int axis = _rand.int32() % 3 + 1;
 			double deg = (2.0*_rand.doub() - 1.0)*_maxangle;
-			Matrix3D R = GenRotationMatrix(axis, deg);
+			Matrix2D R = GenRotationMatrix(deg);
 
 			// Rotate particle.
 			Rotate(particle, R);
@@ -125,9 +124,8 @@ namespace SAPHRON
 			auto opi = op->EvaluateOrderParameter(*w);
 
 			// Choose random axis, and generate random angle.
-			int axis = _rand.int32() % 3 + 1;
 			double deg = (2.0*_rand.doub() - 1.0)*_maxangle;
-			Matrix3D R = GenRotationMatrix(axis, deg);
+			Matrix2D R = GenRotationMatrix(deg);
 
 			// Rotate particle.
 			Rotate(particle, R);

@@ -48,7 +48,7 @@ namespace SAPHRON
 			auto& fs = _worldfs[w->GetID()];
 			*fs << w->GetPrimitiveCount() << "\n";
 			auto& H = w->GetHMatrix();
-			*fs << H(0,0) << " " << H(1,1) << " " << H(2,2) << "\n";
+			*fs << H(0,0) << " " << H(1,1) << "\n";
 
 			for(int i = 0; i < w->GetPrimitiveCount(); ++i)
 			{
@@ -58,10 +58,8 @@ namespace SAPHRON
 				*fs << setw(10) << p->GetSpecies() << " " 
 					<< setw(16) << pos[0] << " " 
 					<< setw(16) << pos[1] << " "
-					<< setw(16) << pos[2] << " "
 					<< setw(16) << dir[0] << " "
-					<< setw(16) << dir[1] << " "
-					<< setw(16) << dir[2] << "\n";
+					<< setw(16) << dir[1] << "\n";
 			}
 		}
 	}

@@ -116,8 +116,7 @@ namespace SAPHRON
 
 				notices.push_back("Setting size to [" +  
 					to_string(dim(0,0)) + ", " + 
-					to_string(dim(1,1)) + ", " + 
-					to_string(dim(2,2)) + "] \u212B.");
+					to_string(dim(1,1)) + "] \u212B.");
 				
 				notices.push_back("Setting neighbor list radius to " + 
 					to_string(world->GetNeighborRadius()) + 

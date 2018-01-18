@@ -6,7 +6,7 @@
 #include "json/json.h"
 #include "../Observers/Visitable.h"
 #include "../Connectivities/Connectivity.h"
-#include "../Properties/Vector3D.h"
+#include "../Properties/Vector2D.h"
 #include "../JSON/Serializable.h"
 #include <algorithm>
 #include <cassert>
@@ -311,18 +311,17 @@ namespace SAPHRON
 		}
 
 		// Sets the molecule position.
-		void SetPosition(double x, double y, double z)
+		void SetPosition(double x, double y)
 		{
 			this->_pEvent.SetOldPosition(_position);
 			if(_children.size() != 0)
 			{
-				Position dij {_position[0] - x, _position[1] - y, _position[2] - z};
+				Position dij {_position[0] - x, _position[1] - y};
 				for(auto& child : *this)
 					child->SetPosition(child->GetPosition() + dij);
 			}
 			_position[0] = x;
 			_position[1] = y;
-			_position[2] = z;
 			this->_pEvent.position = 1;
 			this->NotifyObservers();
 		}
@@ -364,12 +363,11 @@ namespace SAPHRON
 		}
 
 		// Set the particle director.
-		void SetDirector(double ux, double uy, double uz)
+		void SetDirector(double ux, double uy)
 		{
 			this->_pEvent.SetOldDirector(_director);
 			_director[0] = ux;
 			_director[1] = uy;
-			_director[2] = uz;
 			this->_pEvent.director = 1;
 			this->NotifyObservers();
 		}
@@ -407,7 +405,7 @@ namespace SAPHRON
 				this->_pEvent.SetOldPosition(_position);
 				this->_pEvent.position = 1;
 
-				_position = {0, 0, 0};
+				_position = {0, 0};
 				_mass = 0; 
 				for(auto& child : *this)
 				{
@@ -641,12 +639,10 @@ namespace SAPHRON
 			auto& pos = GetPosition();
 			json[2][0] = pos[0];
 			json[2][1] = pos[1];
-			json[2][2] = pos[2];
 
 			auto& dir = GetDirector();
 			json[3][0] = dir[0];
 			json[3][1] = dir[1];
-			json[3][2] = dir[2];
 		}
 
 

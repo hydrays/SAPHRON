@@ -147,9 +147,9 @@ set(SOURCE
 	src/Observers/JSONObserver.cpp
 	src/Observers/XYZObserver.cpp
 	src/Particles/Particle.cpp
+	src/Simulation/DOSSimulation.cpp
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp
-	src/Simulation/DOSSimulation.cpp
 	src/Simulation/Simulation.cpp
 	src/Simulation/StandardSimulation.cpp
 	src/Utils/Histogram.cpp

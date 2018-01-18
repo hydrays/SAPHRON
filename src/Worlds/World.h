@@ -34,7 +34,7 @@ namespace SAPHRON
 		double _ncut, _ncutsq;
 
 		// Box matrix.
-		Matrix3D _H;
+		Matrix2D _H;
 
 		// Is diagoanl?
 		bool _diag;
@@ -153,16 +153,15 @@ namespace SAPHRON
 		typedef ParticleList::const_iterator const_iterator;
 
 		// Initialize an orthorhombic world.
-		World(double xl, double yl, double zl, double ncut, double skin, unsigned seed = 1) : 
+		World(double xl, double yl, double ncut, double skin, unsigned seed = 1) : 
 		_ncut(ncut), _ncutsq(ncut*ncut), _H(arma::fill::zeros), _diag(true),
-		_periodx(true), _periody(true), _periodz(true), _skin(skin), _skinsq(skin*skin), 
+		_periodx(true), _periody(true), _skin(skin), _skinsq(skin*skin), 
 		_temperature(0.0), _chemp(0), _debroglie(0), _nbrs(0), _particles(0), _primitives(0), 
 		_rand(seed), _composition(0), _stash(0), _seed(seed), _id(_nextID++)
 		{
 			_stringid = "world" + std::to_string(_id);
 			_H(0,0) = xl;
 			_H(1,1) = yl;
-			_H(2,2) = zl;
 			
 			_composition.reserve(20);
 			_stash.reserve(20);
@@ -486,8 +485,6 @@ namespace SAPHRON
 				(*position)[0] -= _H(0,0)*ffloor((*position)[0]/_H(0,0));
 			if(_periody)
 				(*position)[1] -= _H(1,1)*ffloor((*position)[1]/_H(1,1));
-			if(_periodz)
-				(*position)[2] -= _H(2,2)*ffloor((*position)[2]/_H(2,2));
 		}
 	
 		// Applies minimum image convention to distances. 
@@ -507,14 +504,6 @@ namespace SAPHRON
 					(*position)[1] -= _H(1,1);
 				else if((*position)[1] < -_H(1,1)/2.0)
 					(*position)[1] += _H(1,1);
-			}
-
-			if(_periodz)
-			{
-				if((*position)[2] > _H(2,2)/2.0)
-					(*position)[2] -= _H(2,2);
-				else if((*position)[2] < -_H(2,2)/2.0)
-					(*position)[2] += _H(2,2);
 			}
 		}
 
@@ -699,12 +688,12 @@ namespace SAPHRON
 		}
 
 		// Get H matrix.
-		inline const Matrix3D& GetHMatrix() const { return _H; }
+		inline const Matrix2D& GetHMatrix() const { return _H; }
 
 		// Get system volume.
 		inline double GetVolume() const
 		{
-			return _H(0,0)*_H(1,1)*_H(2,2);
+			return _H(0,0)*_H(1,1);
 		}
 
 		// Sets the volume of the world isotropically and if scale is true, 
@@ -721,10 +710,6 @@ namespace SAPHRON
 		// Gets/sets the periodicity of the y-coordinate.
 		bool GetPeriodicY() const { return _periody; }
 		void SetPeriodicY(bool periodic) { _periody = periodic; }
-
-		// Gets/sets the periodicity of the z-coordinate.
-		bool GetPeriodicZ() const { return _periodz; }
-		void SetPeriodicZ(bool periodic) { _periodz = periodic; }
 
 		// Iterators.
 		iterator begin() { return _particles.begin(); }

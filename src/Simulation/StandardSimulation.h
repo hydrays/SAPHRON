@@ -60,17 +60,28 @@ namespace SAPHRON
 			}
 			#endif
 
+			printf("inside standardsimulation->initial: 00\n");
+
 			// Moves per iteration.
 			int mpi = 0;
 
 			// Evaluate energies of systems. 
 			for(auto& world : *_wmanager)
 			{
+				printf("inside standardsimulation->initial: 00-1\n");
+
 				auto EP = _ffmanager->EvaluateEnergy(*world);
+
+				printf("inside standardsimulation->initial: 00-2\n");
+
 				world->SetEnergy(EP.energy);
+
+				printf("inside standardsimulation->initial: 00-3\n");
 				world->SetPressure(EP.pressure);
 				mpi += world->GetParticleCount();
 			}
+
+			printf("inside standardsimulation->initial: 01\n");
 
 			this->SetMovesPerIteration(mpi);
 			UpdateAcceptances();

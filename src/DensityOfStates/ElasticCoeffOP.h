@@ -25,10 +25,10 @@ namespace SAPHRON
 	class ElasticCoeffOP : public DOSOrderParameter, public ParticleObserver
 	{
 	private:
-		Matrix3D _Q;
+		Matrix2D _Q;
 		PosFilter _efunc;
-		arma::cx_colvec3 _eigval;
-		arma::cx_mat33 _eigvec;
+		arma::cx_colvec2 _eigval;
+		arma::cx_mat22 _eigvec;
 		arma::uword _imax;
 		
 		// Particle count for averaging.
@@ -103,12 +103,12 @@ namespace SAPHRON
 				{
 					++_pcount;
 					auto& dir = p->GetDirector();
-					_Q += arma::kron(dir.t(), dir) - 1.0/3.0*arma::eye(3,3);
+					_Q += arma::kron(dir.t(), dir) - 1.0/2.0*arma::eye(2,2);
 				}
 			}
 
 			// Average.
-			_Q *= 3.0/(2.0*_pcount);
+			_Q *= 1.0/(2.0*_pcount);
 			UpdateQTensor();
 		}
 
@@ -132,7 +132,7 @@ namespace SAPHRON
 			// We expect the eigenvector to point in the first two quadrants. 
 			// Flip sign of dni if it's not. This is to prevent fluctuations of the 
 			// order parameter from one side to the other. 
-			dni = (_eigvec(2, _imax).real() < 0) ? -dni : dni;
+			//dni = (_eigvec(2, _imax).real() < 0) ? -dni : dni;
 
 			// Return dni/dx. (this is twist, hardcoded for now). 
 			return dni/_dxj;
@@ -151,7 +151,7 @@ namespace SAPHRON
 			if(pEvent.director && _efunc(pos))
 			{
 				auto& pdir = pEvent.GetOldDirector();
-				_Q += 3.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - arma::kron(pdir.t(), pdir));
+				_Q += 1.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - arma::kron(pdir.t(), pdir));
 				UpdateQTensor();
 				return;
 			}
@@ -169,7 +169,7 @@ namespace SAPHRON
 					_Q *= _pcount/(_pcount + 1.);
 					++_pcount;
 
-					_Q += 3.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - 1.0/3.0*arma::eye(3,3));
+					_Q += 1.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - 1.0/2.0*arma::eye(2,2));
 					UpdateQTensor();
 				}
 				else if(_efunc(ppos) && !_efunc(pos))
@@ -177,7 +177,7 @@ namespace SAPHRON
 					_Q *= _pcount/(_pcount - 1.);
 					--_pcount;
 
-					_Q -= 3.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - 1.0/3.0*arma::eye(3,3));
+					_Q -= 1.0/(2.0*_pcount)*(arma::kron(dir.t(), dir) - 1.0/2.0*arma::eye(2,2));
 					UpdateQTensor();
 				}
 			}

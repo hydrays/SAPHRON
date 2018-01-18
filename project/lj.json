@@ -5,7 +5,7 @@
 {
 	"blueprints" : 
 	{
-		"GB" : 
+		"LJ" : 
 		{
 			"charge" : 0,
 			"mass" : 1
@@ -14,41 +14,14 @@
 	"convergence_factor" : 1e-7,
 	"forcefields" : 
 	{
-		"constraints" : 
-		[
-			{
-				"coefficient" : 1000,
-				"director" : [ 0, 1, 0 ],
-				"index" : 0,
-				"limits" : [ 0, 2 ],
-				"world" : 0,
-				"type" : "DirectorRestriction"
-			},
-			{
-				"coefficient" : 1000,
-				"director" : [ 1, 0, 0 ],
-				"index" : 0,
-				"limits" : [ 8, 10 ],
-				"world" : 0,
-				"type" : "DirectorRestriction"
-			}
-		],
-		"nonbonded" : 
-		[
-			{
-				"diameters" : [ 1, 1 ],
-				"dw" : 1,
-				"eps0" : 1,
-				"epsE" : 1,
-				"epsS" : 5,
-				"lengths" : [ 3, 3 ],
-				"mu" : 2,
-				"nu" : 1,
-				"rcut" : [ 5 ],
-				"species" : [ "GB", "GB" ],
-				"type" : "GayBerne"
-			}
-		]
+        "nonbonded": [
+            {
+                "type"  : "LennardJones",
+                "sigma" : 3.1,
+                "epsilon": 4.4,
+                "species": ["LJ", "LJ"]
+            }
+        ]
 	},
 	"histogram" : 
 	{
