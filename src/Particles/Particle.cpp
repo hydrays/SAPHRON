@@ -180,6 +180,10 @@ namespace SAPHRON
 			dir = {particles[4][0].asDouble(), 
 				   particles[4][1].asDouble()};
 
+		// Hu modi: normalize direct
+		printf("inside particle->BuildParticles: rescale director 1 \n");		   
+		dir = dir/fnorm(dir);
+
 		// Check that we have a proper blueprint.
 		if(blueprints.isMember(species) && blueprints[species].isMember("children"))
 			throw BuildException(
@@ -333,6 +337,10 @@ namespace SAPHRON
 			Director dir;
 			if(p.size() > 3)
 				dir = {p[3][0].asDouble(), p[3][1].asDouble()};
+
+			// Hu modi: normalize direct
+			printf("inside particle->BuildParticles: rescale director 2 \n");		   
+			dir = dir/fnorm(dir);
 
 			// Create the particle.
 			Particle* particle = new Particle(pos, dir, species);

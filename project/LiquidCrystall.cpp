@@ -1,8 +1,10 @@
 #include "../src/ForceFields/LennardJonesFF.h"
+#include "../src/ForceFields/GayBerneFF.h"
 #include "../src/ForceFields/ForceFieldManager.h"
 #include "../src/Simulation/StandardSimulation.h"
 #include "../src/Moves/MoveManager.h"
 #include "../src/Moves/TranslateMove.h"
+#include "../src/Moves/RotateMove.h"
 #include "../src/Particles/Particle.h"
 
 #include "../src/Worlds/World.h"
@@ -33,8 +35,8 @@ int main()
 	printf("here[0-0-0]");
 
 	// Load file (assumes we are in build folder).
-	//std::ifstream t("../project/gb_no_skin.json");
-	std::ifstream t("../project/nist_lj_config1.json");
+	std::ifstream t("../project/gb_no_skin.json");
+	// std::ifstream t("../project/nist_lj_config1.json");
 	std::stringstream buffer;
 	buffer << t.rdbuf();
 
@@ -52,15 +54,15 @@ int main()
 	wm.AddWorld(w);
 
 	printf("here[0-1]");
-	// // Gay Berne interaction.
-	// ForceFieldManager ffm;
-	// GayBerneFF ff(1.0, 1.0, 3.0, 3.0, 1.0, 1.0, 5.0, 1.0, {5.0}, 2.0, 1.0);
-	// ffm.AddNonBondedForceField("GB", "GB", ff);
-
-	// LJ interaction.
+	// Gay Berne interaction.
 	ForceFieldManager ffm;
-	LennardJonesFF ff(1.0, 1.0, {10.0});
-	ffm.AddNonBondedForceField("LJ", "LJ", ff);
+	GayBerneFF ff(1.0, 1.0, 3.0, 3.0, 1.0, 1.0, 5.0, 1.0, {5.0}, 2.0, 1.0);
+	ffm.AddNonBondedForceField("GB", "GB", ff);
+
+	// // LJ interaction.
+	// ForceFieldManager ffm;
+	// LennardJonesFF ff(1.0, 1.0, {10.0});
+	// ffm.AddNonBondedForceField("LJ", "LJ", ff);
 
 	printf("here[0]");
 	// // Get constraints.
@@ -73,9 +75,12 @@ int main()
 	// Move::BuildMoves(root["moves"], &mm, &wm, moves);
 
     // Initialize moves.                                                                                                                   
-    TranslateMove move(0.22);
+    TranslateMove move1(0.22);
     MoveManager mm;
-    mm.AddMove(&move);
+    mm.AddMove(&move1);
+
+    RotateMove move2(0.2);
+    mm.AddMove(&move2);
 
 	printf("here[1]");
 
