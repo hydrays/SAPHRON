@@ -217,17 +217,17 @@ configure_file (
 
 message(STATUS "")
 
-# Add project
-set(TEST_DEPS 
-	${SAPH_LIBS} 
-	${GTEST_LIBRARY_PATH} 
-	${GTEST_LIBRARY_MAIN_PATH}
-	libsaphron)
+# # Add project
+# set(TEST_DEPS 
+# 	${SAPH_LIBS} 
+# 	${GTEST_LIBRARY_PATH} 
+# 	${GTEST_LIBRARY_MAIN_PATH}
+# 	libsaphron)
       
-add_executable(LiquidCrystall project/LiquidCrystall.cpp)
-target_link_libraries(LiquidCrystall ${TEST_DEPS})
-target_include_directories(LiquidCrystall PRIVATE "${GTEST_INCLUDE_DIR}")
-add_dependencies(LiquidCrystall googletest) 
+# add_executable(LiquidCrystall project/LiquidCrystall.cpp)
+# target_link_libraries(LiquidCrystall ${TEST_DEPS})
+# target_include_directories(LiquidCrystall PRIVATE "${GTEST_INCLUDE_DIR}")
+# add_dependencies(LiquidCrystall googletest) 
 
 # # Add testing 
 # enable_testing()

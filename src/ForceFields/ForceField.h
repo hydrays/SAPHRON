@@ -33,6 +33,11 @@ namespace SAPHRON
 									 const Position& rij,
 									 unsigned int wid) const = 0;
 
+		virtual double EvaluateTorque(const Particle& p1, 
+									 const Particle& p2, 
+									 const Position& rij,
+									 unsigned int wid) const = 0;
+
 		// Evaluates the energy tail correction term. 
 		// This is precisely integral(u(r)*r^2,rc,inf). 
 		// The remainder is taken care of by the forcefield manager.

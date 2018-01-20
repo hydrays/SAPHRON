@@ -17,18 +17,10 @@
 		"constraints" : 
 		[
 			{
-				"coefficient" : 1000,
+				"coefficient" : 0,
 				"director" : [ 0, 1, 0 ],
 				"index" : 0,
-				"limits" : [ 0, 2 ],
-				"world" : 0,
-				"type" : "DirectorRestriction"
-			},
-			{
-				"coefficient" : 1000,
-				"director" : [ 1, 0, 0 ],
-				"index" : 0,
-				"limits" : [ 8, 10 ],
+				"limits" : [ 6, 8 ],
 				"world" : 0,
 				"type" : "DirectorRestriction"
 			}
@@ -36,13 +28,13 @@
 		"nonbonded" : 
 		[
 			{
-				"diameters" : [ 1, 1 ],
+				"diameters" : [ 3.22, 3.22 ],
 				"dw" : 1,
 				"eps0" : 1,
 				"epsE" : 1,
-				"epsS" : 5,
-				"lengths" : [ 3, 3 ],
-				"mu" : 2,
+				"epsS" : 1,
+				"lengths" : [ 3.22, 3.22 ],
+				"mu" : 1,
 				"nu" : 1,
 				"rcut" : [ 5 ],
 				"species" : [ "GB", "GB" ],
@@ -56,21 +48,20 @@
 		"max" : 0.02,
 		"min" : -0.02
 	},
-	"iterations" : 20,
+	"iterations" : 2000,
 	"moves" : 
 	[
 		{
-			"dx" : 0.08,
+			"dx" : 0.22,
 			"type" : "Translate",
 			"weight" : 50
 		},
 		{
-			"maxangle" : 0.1,
+			"maxangle" : 1.1,
 			"type" : "Rotate",
 			"weight" : 50
 		}
 	],
-	"mpi" : 338,
 	"observers" : 
 	[
 		{
@@ -83,10 +74,11 @@
 				"simulation" : 1,
 				"world" : 1,
 				"particle_position": 1,
+				"energy_components" : 1,
 				"particle_director" : 1
-			},
-			"frequency" : 1,
-			"prefix" : "elastic4",
+			},					
+			"frequency" : 100,
+			"prefix" : "out.sys1",
 			"type" : "DLMFile"
 		},
 		{
@@ -98,13 +90,13 @@
 			{
 				"histogram" : 1
 			},
-			"frequency" : 1,
+			"frequency" : 100,
 			"prefix" : "dos4",
 			"type" : "DLMFile"
 		},
 		{
-			"frequency" : 1,
-			"prefix" : "elastic4.chkpt",
+			"frequency" : 100,
+			"prefix" : "out.sys1.chkpt",
 			"type" : "JSON"
 		}
 	],
@@ -2159,7 +2151,7 @@
 				"y" : true,
 				"z" : true
 			},
-			"skin_thickness" : 0,
+			"skin_thickness" : 5,
 			"temperature" : 1,
 			"type" : "Simple"
 		}

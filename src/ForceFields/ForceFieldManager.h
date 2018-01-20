@@ -91,6 +91,8 @@ namespace SAPHRON
 		// Evaluate constraint energy of entire world.
 		double EvaluateConstraintEnergy(const World& world) const;
 
+		double EvaluateTorque(const Particle& particle) const;
+
 		// Evaluates the intermolecular energy of a particle.
 		// This includes constraint energy. 
 		EPTuple EvaluateInterEnergy(const Particle& particle) const;

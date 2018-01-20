@@ -7,24 +7,17 @@ namespace SAPHRON
 
 		//printf("inside standardsimulation->iterate: 00\n");
 
-		// _mmanager->ResetMoveAcceptances();
+		_mmanager->ResetMoveAcceptances();
 		
 		// Select random move and perform.
-		// for(int i = 0; i < GetMovesPerIteration(); ++i)
-		// {
-			//printf("inside standardsimulation->iterate: 01\n");
-			// auto* move = _mmanager->SelectRandomMove();
-			// move->Perform(_wmanager, _ffmanager, MoveOverride::None);
-		// }
-
-		auto* move = _mmanager->SelectRandomMove();
-		if ( move->GetName().compare("Rotate") != 0 )
+		for(int i = 0; i < GetMovesPerIteration(); ++i)
 		{
-			printf("inside standardsimulation->iterate: only rotate is allowed!\n");
+			//printf("inside standardsimulation->iterate: 01\n");
+			auto* move = _mmanager->SelectRandomMove();
+			move->Perform(_wmanager, _ffmanager, MoveOverride::None);
 		}
-		move->Integrator(_wmanager, _ffmanager);
 		
-		// UpdateAcceptances();
+		UpdateAcceptances();
 		this->IncrementIterations();
 
 		#ifdef MULTI_WALKER

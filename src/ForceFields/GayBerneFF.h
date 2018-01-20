@@ -101,6 +101,73 @@ namespace SAPHRON
 			return ep;
 		}
 
+		virtual double EvaluateTorque(
+			const Particle& p1, 
+			const Particle& p2, 
+			const Position& rij, 
+			unsigned int wid) const override
+		{
+			double torque = 0.0;
+
+			auto r = fnorm(rij);
+			if(r > _rc[wid])
+				return torque;
+			
+			auto& ui = p1.GetDirector();
+			auto& uj = p2.GetDirector();
+
+			auto uirij = fdot(ui, rij)/r;
+			auto ujrij = fdot(uj, rij)/r;
+			auto uiuj = fdot(ui, uj);
+
+			auto H =  (_Xasq*uirij*uirij   + _Xa_sq*ujrij*ujrij   - 2.*_Xsq*uirij*ujrij*uiuj)/(1.  - _Xsq*uiuj*uiuj);
+			auto Hp = (_Xpapsq*uirij*uirij + _Xpap_sq*ujrij*ujrij - 2.*_Xpsq*uirij*ujrij*uiuj)/(1. - _Xpsq*uiuj*uiuj);
+			auto sig = _sig0/sqrt(1.0-H);
+			auto eps1 = 1.0/sqrt(1.0-_Xsq*uiuj*uiuj);
+			auto eps2 = 1.0 - Hp;
+			auto eps = _eps0*pow(eps1, _nu)*pow(eps2, _mu);
+			auto R = _dw*_sig0/(r - sig + _dw*_sig0);
+			auto R3 = R*R*R;
+			auto R6 = R3*R3;
+			auto R7 = R6*R;
+			auto R12 = R6*R6;
+			auto R13 = R6*R7;
+
+			auto sig3 = sig*sig*sig;
+			auto sig03 = _sig0*_sig0*_sig0;
+			auto pref1 = 8.0 * eps * _mu * (R12 - R6) / (eps2 * r);
+			auto pref2 = 8.0 * eps * sig3 * (6.0*R13 - 3.0*R7) / (_dw * r * sig03);
+	
+			auto dUda = pref1 * (_Xpapsq*uirij - _Xpsq*ujrij*uiuj) / (1.0 - _Xpsq*uiuj*uiuj) +
+      					pref2 * (_Xasq * uirij - _Xasq *ujrij*uiuj) / (1.0 - _Xsq * uiuj*uiuj);
+
+			auto dUdg = 4.0 * eps * _nu * (R12 - R6) * _Xsq * uiuj / (1.0 - _Xsq*uiuj*uiuj) +
+      					8.0 * eps * _mu * (R12 - R6) * (_Xpsq*uirij*ujrij - Hp*_Xpsq*uiuj) / 
+      					(1.0 - _Xpsq * uiuj*uiuj) / eps2 + 8.0 * eps * sig3 * (3.0 * R7 - 6.0 * R13) * 
+      					(_Xsq * uirij * ujrij - H * _Xsq * uiuj) / (1.0 - _Xsq * uiuj*uiuj) / (_dw * sig03);
+
+			auto rxu = rij[0]*ui[1] - rij[1]*ui[0];
+			auto uxu = ui[0]*uj[1] - ui[1]*uj[0];
+
+			//ep.energy = 4.0*eps*(pow(R, 12.) - pow(R, 6.));
+			torque = (dUda * rxu - dUdg * uxu);
+
+			// Another check for unphysicalness. R is an approximation 
+			// of the surface to surface distance. It should never be 
+			// negative.
+			if(R < 0)
+			{
+				//printf("inside GayBerne->Evaluate: unphysical value R=%f, r=%f\n", R, r);
+				// return {1.0e10/std::abs(r), 0};
+				return 0.0;
+			}
+			//printf("inside GayBerne->Evaluate: u1 = (%f, %f), u2 = (%f, %f), r = (%f, %f), R=%f, torque=%f\n", 
+			//	ui[0], ui[1], uj[0], uj[1], rij[0], rij[1], R, torque);
+			//printf("%f, %f, %f, %f, %f, %f, %f, %f\n", 
+			//	ui[0], ui[1], uj[0], uj[1], rij[0], rij[1], R, torque);
+			return torque;
+		}
+
 		virtual void Serialize(Json::Value& json) const override
 		{
 			json["type"] = "GayBerne"; 

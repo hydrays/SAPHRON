@@ -72,8 +72,8 @@ namespace SAPHRON
 
 				auto EP = _ffmanager->EvaluateEnergy(*world);
 
-				// printf("inside standardsimulation->initial: 00-2\n");
-				// printf("EP: %f %f\n", EP.energy.intervdw, EP.energy.constraint);
+				printf("inside montecarlosimulation->initial: 00-2\n");
+				printf("EP: %f %f\n", EP.energy.intervdw, EP.energy.constraint);
 
 				world->SetEnergy(EP.energy);
 

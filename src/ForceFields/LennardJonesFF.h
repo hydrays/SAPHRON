@@ -58,6 +58,14 @@ namespace SAPHRON
 			return ep;
 		}
 
+		virtual double EvaluateTorque(const Particle&, 
+									 const Particle&, 
+									 const Position& rij,
+									 unsigned int wid) const override
+		{
+			return 0.0;
+		}
+
 		virtual double EnergyTailCorrection(unsigned int wid) const override
 		{
 			return _etail[wid];

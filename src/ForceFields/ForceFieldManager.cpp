@@ -157,6 +157,29 @@ namespace SAPHRON
 		return energy;
 	}
 
+	double ForceFieldManager::EvaluateTorque(const Particle& particle) const
+	{
+		World* world = particle.GetWorld();
+		unsigned wid = (world == nullptr) ? 0 : world->GetID();
+		auto& neighbors = particle.GetNeighbors();
+		auto n = neighbors.size();
+
+		auto torque = 0.0;
+		for(size_t k = 0; k < n; ++k)
+		{
+			auto* neighbor = neighbors[k];
+			Position rij = particle.GetPosition() - neighbor->GetPosition();
+											
+			auto it = _nonbondedforcefields.find({particle.GetSpeciesID(),neighbor->GetSpeciesID()});
+			if(it != _nonbondedforcefields.end())
+			{
+				auto* ff = it->second;
+				torque += ff->EvaluateTorque(particle, *neighbor, rij, wid);
+			}
+		}
+		return torque;
+	}
+
 	EPTuple ForceFieldManager::EvaluateInterEnergy(const Particle& particle) const
 	{
 		//printf("inside ForceFieldManager->EvaluateInerEnergy: 00-0\n");

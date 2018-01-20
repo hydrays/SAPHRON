@@ -91,6 +91,8 @@ namespace SAPHRON
 			double p = exp(-de.total()/(w->GetTemperature()*sim.GetkB()));
 			p = p > 1.0 ? 1.0 : p;
 
+			// printf("inside RotateMove->perfom: angle = %f, de = %f, p = %f\n", deg, de.total(), p);
+			// printf("e.con1 = %f, e.con2 = %f\n", ei.energy.constraint, ef.energy.constraint);
 			// Reject or accept move.
 			if(!(override == ForceAccept) && (p < _rand.doub() || override == ForceReject))
 			{
@@ -194,5 +196,29 @@ namespace SAPHRON
 			return new RotateMove(static_cast<const RotateMove&>(*this));
 		}
 
+		// Perform rotation on a random particle from a random world.
+		virtual void Integrator(WorldManager* wm, 
+							 ForceFieldManager* ffm)
+		{
+
+			double dt = 1e-4;
+			// Get random particle from random world.
+			World* world = wm->GetWorld(0);
+
+			// moveA();
+			for(auto& particle : *world)
+			{
+				auto& dir = particle->GetDirector();
+				auto deg_drift = dt*ffm->EvaluateTorque(*particle);
+				double deg_noise = dt*(2.0*_rand.doub() - 1.0)*world->GetTemperature();
+
+				//printf("inside RotateMove->Integrator: deg_drift = %f, deg_noise = %f\n", deg_drift, deg_noise);
+				Matrix2D R = GenRotationMatrix(deg_drift + deg_noise);
+				Rotate(particle, R);
+			}
+    		// calcForce();
+			// ffm.calcForce();
+    		// moveB();
+		}
 	};
 }

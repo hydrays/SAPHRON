@@ -166,7 +166,12 @@ namespace SAPHRON
 				w->IncrementPressure(ef.pressure - ei.pressure);
 			}	
 		}
-		
+
+		virtual void Integrator(WorldManager* wm, 
+							 ForceFieldManager* ffm)
+		{
+		}		
+
 		// Perform move using DOS interface.
 		virtual void Perform(World* w, ForceFieldManager* ffm, DOSOrderParameter* op , const MoveOverride& override) override
 		{

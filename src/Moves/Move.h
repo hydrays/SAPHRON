@@ -47,6 +47,9 @@ namespace SAPHRON
 							 ForceFieldManager* ffm, 
 							 const MoveOverride& override) = 0;
 
+		virtual void Integrator(WorldManager* wm, 
+							 ForceFieldManager* ffm) = 0;
+
 		// Perform move interface for DOS ensemble.
 		virtual void Perform(World* world, 
 							 ForceFieldManager* ffm, 
