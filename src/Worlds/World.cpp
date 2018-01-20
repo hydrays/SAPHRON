@@ -396,10 +396,12 @@ namespace SAPHRON
 		const auto& box = this->GetHMatrix();
 		json["dimensions"][0] = box(0,0);
 		json["dimensions"][1] = box(1,1);
+		json["dimensions"][2] = 0.0;
 
 		// Serialize periodicity. 
 		json["periodic"]["x"] = this->GetPeriodicX();
 		json["periodic"]["y"] = this->GetPeriodicY();
+		json["periodic"]["z"] = true;
 
 		json["seed"] = this->GetSeed();
 		json["skin_thickness"] = this->GetSkinThickness();

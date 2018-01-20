@@ -23,8 +23,8 @@ namespace SAPHRON
 		auto spsi = sin(psi);
 
 		// Build rotation matrix. 
-		return {{ cpsi, spsi},
-				{-spsi, cpsi}};
+		return {{ cpsi, -spsi},
+				{spsi, cpsi}};
 	}
 
 	// Retrieves the contents of a file and returns them

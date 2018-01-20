@@ -33,6 +33,8 @@ namespace SAPHRON
 		arma::cx_mat22 _eigvec; 
 		arma::uword _imax; 
 
+		double _penalty;
+
 		// Particle count for averaging.
 		int _pcount;
 
@@ -78,7 +80,7 @@ namespace SAPHRON
 			const std::array<double, 2> lim) : 
 		Constraint(world), _coeff(coeff), _dir(dir), _index(index), 
 		_lim(lim), _Q(arma::fill::zeros), _eigval(arma::fill::zeros), 
-		_eigvec(arma::fill::zeros), _imax(0), _pcount(0)
+		_eigvec(arma::fill::zeros), _imax(0), _pcount(0), _penalty(0)
 		{
 			using namespace arma;
 
@@ -91,22 +93,30 @@ namespace SAPHRON
 					++_pcount;
 					auto& u = p->GetDirector();
 					_Q += kron(u.t(), u) - 1.0/2.0*eye(2,2);
+					_penalty += fdot(u, _dir)*fdot(u, _dir);
 				}
 			}
 
 			// Average
-			_Q *= 2.0/(2.0*_pcount);
-			UpdateQTensor();
+			//_Q *= 2.0/(2.0*_pcount);
+			_penalty *= 1.0/_pcount;
+			//UpdateQTensor();
 		}
 
 		double EvaluateEnergy() const override 
 		{
-			double dot = (
-				_eigvec(0, _imax).real()*_dir[0] + 
-				_eigvec(1, _imax).real()*_dir[1]
-			);
+		// 	double dot = (
+		// 		_eigvec(0, _imax).real()*_dir[0] + 
+		// 		_eigvec(1, _imax).real()*_dir[1]
+		// 	);
 
-			return -1.0*_coeff*(dot*dot - 0.5);
+			// printf("inside DirectorRestrictionC->EvaluateEnergy\n");
+			// printf("target [%f, %f] \n", _dir[0], _dir[1]);
+			// printf("current [%f, %f] \n", _eigvec(0, _imax).real(), _eigvec(1, _imax).real());
+			// printf("eigenvalue [%f, %f] \n", _eigval(_imax).real(), _eigval(0).real());
+			//return -1.0*_coeff*(dot*dot - 0.5);
+			// return -1.0*_coeff*(2.0*dot*dot);
+			return -1.0*_coeff*_penalty;
 		}
 
 		// Update Q tensor on particle director change.
@@ -124,8 +134,9 @@ namespace SAPHRON
 			if(pEvent.director && IsInRegion(pos))
 			{
 				auto& pdir = pEvent.GetOldDirector();
-				_Q += 2.0/(2.0*_pcount)*(kron(dir.t(), dir) - kron(pdir.t(), pdir));
-				UpdateQTensor();
+				//_Q += 2.0/(2.0*_pcount)*(kron(dir.t(), dir) - kron(pdir.t(), pdir));
+				//UpdateQTensor();
+				//_penalty += (1.0/_pcount)*(fdot(dir,_dir)*fdot(dir,_dir) - fdot(pdir,_dir)*fdot(pdir,_dir));
 				return;
 			}
 			else if(pEvent.position)
@@ -140,19 +151,24 @@ namespace SAPHRON
 				if(!IsInRegion(ppos) && IsInRegion(pos))
 				{
 					// Update normalization.
-					_Q *= _pcount/(_pcount + 1.);
+					// _Q *= _pcount/(_pcount + 1.);
+					_penalty *= _pcount/(_pcount + 1.);
 					++_pcount;
 
-					_Q += 2.0/(2.0*_pcount)*(kron(dir.t(), dir) - 1.0/2.0*eye(2,2));
-					UpdateQTensor();
+					// _Q += 2.0/(2.0*_pcount)*(kron(dir.t(), dir) - 1.0/2.0*eye(2,2));
+					// UpdateQTensor();
+					_penalty *= _pcount/(_pcount + 1.);
+					_penalty += (1.0/_pcount)*(fdot(dir,_dir)*fdot(dir,_dir));
 				}
 				else if(IsInRegion(ppos) && !IsInRegion(pos))
 				{
 					_Q *= _pcount/(_pcount - 1.);
+					_penalty *= _pcount/(_pcount - 1.);
 					--_pcount;
 
 					_Q -= 2.0/(2.0*_pcount)*(kron(dir.t(), dir) - 1.0/2.0*eye(2,2));
 					UpdateQTensor();
+					_penalty -= (1.0/_pcount)*(fdot(dir,_dir)*fdot(dir,_dir));
 				}
 			}			
 		}
@@ -163,6 +179,7 @@ namespace SAPHRON
 			json["coefficient"] = _coeff;
 			json["director"][0] = _dir[0];
 			json["director"][1] = _dir[1];
+			json["director"][2] = 0.0;
 			json["index"] = _index;
 			json["limits"][0] = _lim[0];
 			json["limits"][1] = _lim[1];

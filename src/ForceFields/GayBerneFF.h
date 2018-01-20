@@ -93,8 +93,11 @@ namespace SAPHRON
 			// of the surface to surface distance. It should never be 
 			// negative.
 			if(R < 0)
-				return {1.0e10/std::abs(r), 0};
-
+			{
+				//printf("inside GayBerne->Evaluate: unphysical value R=%f, r=%f\n", R, r);
+				// return {1.0e10/std::abs(r), 0};
+				return {1.0e2/std::abs(r), 0};
+			}
 			return ep;
 		}
 

@@ -22,10 +22,10 @@ set(MIN_INTER_NEIGH 10)
 set(MIN_INTRA_NEIGH 10)
 
 # Default is openmp.
-set(SAPHRON_OPENMP true CACHE BOOL "Enable OpenMP parallelization")
+set(SAPHRON_OPENMP false CACHE BOOL "Enable OpenMP parallelization")
 
 # Default is MPI.
-set(SAPHRON_MPI true CACHE BOOL "Enable MPI parallelization")
+set(SAPHRON_MPI false CACHE BOOL "Enable MPI parallelization")
 
 set(SAPH_USE_LINAL false)
 SET(ARMA_PATHS "" CACHE STRING "Search directory for Armadillo")

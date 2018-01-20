@@ -34,7 +34,8 @@ namespace SAPHRON
 				_func(p, _dir);
 
 				double dot = arma::dot(_dir, dir);
-				return -1.0*_coeff*(dot*dot - 0.5);
+				//return -1.0*_coeff*(dot*dot - 0.5);
+				return -1.0*_coeff*(dot*dot);
 			}
 	};
 }

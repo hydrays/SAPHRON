@@ -181,7 +181,7 @@ namespace SAPHRON
 				   particles[4][1].asDouble()};
 
 		// Hu modi: normalize direct
-		printf("inside particle->BuildParticles: rescale director 1 \n");		   
+		// printf("inside particle->BuildParticles: rescale director 1 \n");		   
 		dir = dir/fnorm(dir);
 
 		// Check that we have a proper blueprint.
@@ -339,7 +339,7 @@ namespace SAPHRON
 				dir = {p[3][0].asDouble(), p[3][1].asDouble()};
 
 			// Hu modi: normalize direct
-			printf("inside particle->BuildParticles: rescale director 2 \n");		   
+			// printf("inside particle->BuildParticles: rescale director 2 \n");		   
 			dir = dir/fnorm(dir);
 
 			// Create the particle.

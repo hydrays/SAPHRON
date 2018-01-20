@@ -639,10 +639,12 @@ namespace SAPHRON
 			auto& pos = GetPosition();
 			json[2][0] = pos[0];
 			json[2][1] = pos[1];
+			json[2][2] = 0.0;
 
 			auto& dir = GetDirector();
 			json[3][0] = dir[0];
 			json[3][1] = dir[1];
+			json[3][2] = 0.0;
 		}
 
 
