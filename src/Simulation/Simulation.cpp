@@ -4,7 +4,8 @@
 #include "../Validator/ObjectRequirement.h"
 #include "schema.h"
 #include "SimInfo.h"
-#include "StandardSimulation.h"
+#include "LangevinSimulation.h"
+#include "MonteCarloSimulation.h"
 #include "DOSSimulation.h"
 
 using namespace Json;
@@ -52,10 +53,14 @@ namespace SAPHRON
 		   mm == nullptr || mm == NULL)
 			throw BuildException({"#/simulation: All managers must not be null."});
 		// Setup simulation. 
-		if(simtype == "standard")
+		if(simtype == "Langevin")
 		{
-			sim = new StandardSimulation(wm, ffm, mm);
+			sim = new LangevinSimulation(wm, ffm, mm);
 		}
+		else if(simtype == "MonteCarlo")
+		{
+			sim = new MonteCarloSimulation(wm, ffm, mm);
+		}		
 		else if(simtype == "DOS")
 		{
 			if(dop == nullptr || dop == NULL || 

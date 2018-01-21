@@ -151,7 +151,8 @@ set(SOURCE
 	src/Simulation/SimObservable.cpp
 	src/Simulation/SimObserver.cpp
 	src/Simulation/Simulation.cpp
-	src/Simulation/StandardSimulation.cpp
+	src/Simulation/LangevinSimulation.cpp
+	src/Simulation/MonteCarloSimulation.cpp	
 	src/Utils/Histogram.cpp
 	src/Worlds/World.cpp
 	src/Validator/RequirementLoader.cpp

@@ -8,7 +8,7 @@
 		},
 		"simtype" : {
 			"type" : "string",
-			"enum" : ["standard", "DOS"]
+			"enum" : ["Langevin", "MonteCarlo", "DOS"]
 		},
 		"iterations" : {
 			"type" : "integer",
