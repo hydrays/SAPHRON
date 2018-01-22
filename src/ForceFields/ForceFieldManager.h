@@ -132,5 +132,8 @@ namespace SAPHRON
 
 		// Get (unique) bonded forcefields.
 		const FFMap& GetBondedForceFields() const { return _uniquebffs;	}
+
+		// Resets the electrostatic forcefield (to nothing).
+		void UpdateConstraint(const int iter);
 	};
 }

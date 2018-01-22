@@ -80,6 +80,11 @@ namespace SAPHRON
 			return UHC + _eps*(Aeq - Apol);
 		}
 
+		void UpdateConstraint(const int iter)
+		{
+
+		}
+		
 		void Serialize(Json::Value& json) const override
 		{
 			json["type"] = "PasquaMembrane";

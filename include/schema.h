@@ -9,6 +9,7 @@ namespace SAPHRON
 	public:
 		//INSERT_DEC_HERE
 		static std::string Constraints;
+		static std::string PeriodicPotential;
 		static std::string DirectorRestrictionC;
 		static std::string PasquaMembraneC;
 		static std::string P2SAConnectivity;

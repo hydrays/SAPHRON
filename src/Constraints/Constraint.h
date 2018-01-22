@@ -54,5 +54,7 @@ namespace SAPHRON
 			ConstraintList& ccl);
 
 		virtual ~Constraint(){}
+
+		virtual void UpdateConstraint(const int iter) {}
 	};
 }

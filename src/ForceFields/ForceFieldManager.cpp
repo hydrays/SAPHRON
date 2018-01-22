@@ -484,4 +484,9 @@ namespace SAPHRON
 		e.energy.constraint = EvaluateConstraintEnergy(world);
 		return e;
 	}
+
+	void ForceFieldManager::UpdateConstraint(const int iter)
+	{
+		_constraints[0][0]->UpdateConstraint(iter);
+	}
 }
