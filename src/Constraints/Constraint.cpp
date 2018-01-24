@@ -4,6 +4,7 @@
 #include "../Simulation/SimException.h"
 #include "DirectorRestrictionC.h"
 #include "PeriodicPotentialC.h"
+#include "HedgehogC.h"
 #include "PasquaMembraneC.h"
 #include "schema.h"
 
@@ -60,7 +61,7 @@ namespace SAPHRON
 		}
 		else if(type == "PeriodicPotential")
 		{
-			reader.parse(JsonSchema::PeriodicPotential, schema);
+			reader.parse(JsonSchema::PeriodicPotentialC, schema);
 			validator.Parse(schema, path);
 
 			// Validate inputs. 
@@ -85,6 +86,34 @@ namespace SAPHRON
 
 			auto w = wm->GetWorld(json["world"].asInt());
 			c = new PeriodicPotentialC(w, coeff, dir, index, lim);
+		}
+		else if(type == "Hedgehog")
+		{
+			reader.parse(JsonSchema::HedgehogC, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto coeff = json["coefficient"].asDouble();
+			Director dir{
+				json["director"][0].asDouble(), 
+				json["director"][1].asDouble()};
+
+			auto index = json["index"].asInt();
+
+			std::array<double, 2> lim{{
+				json["limits"][0].asDouble(),
+				json["limits"][1].asDouble()}};
+
+			// Make sure min < max. 
+			if(lim[0] > lim[1])
+				throw BuildException({path + ": Limit minimum cannot exceed maximum."});
+
+			auto w = wm->GetWorld(json["world"].asInt());
+			c = new HedgehogC(w, coeff, dir, index, lim);
 		}
 		else if(type == "PasquaMembrane")
 		{

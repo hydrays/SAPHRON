@@ -1,10 +1,10 @@
 {
 	"type" : "object", 
-	"varname" : "PeriodicPotentialC",
+	"varname" : "HedgehogC",
 	"properties" : {
 		"type" : {
 			"type" : "string", 
-			"enum" : ["PeriodicPotential"]
+			"enum" : ["Hedgehog"]
 		},
 		"coefficient" : {
 			"type" : "number"

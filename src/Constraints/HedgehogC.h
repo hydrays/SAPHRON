@@ -8,12 +8,15 @@
 namespace SAPHRON
 {
 	// Class for applying periodic potential
-	class PeriodicPotentialC : public Constraint, public ParticleObserver
+	class HedgehogC : public Constraint, public ParticleObserver
 	{
 	private:
 		// Penalty coefficient.
 		double _coeff; 
 
+		// Center of circle
+		double _cx, _cy;
+		    
 		// Preferred direction.
 		Director _dir;
 
@@ -46,6 +49,26 @@ namespace SAPHRON
 			return true;
 		}
 
+		bool IsAtBoundary(const Position& pos)
+		{
+		    double r = sqrt((pos[0] - _cx)*(pos[0] - _cx) + (pos[1] - _cy)*(pos[1] - _cy));
+		    double dr = 0.5;
+		    double r0 = 4.5;
+		    if( (r>r0-dr) && (r<r0+dr) )
+			return true;
+		    else
+			return false;
+		}
+
+		double BoundaryEnergy(const Position& pos, const Director& dir)
+		{
+		    Director radial_vec;
+		    radial_vec[0] = pos[0] - _cx;
+		    radial_vec[1] = pos[1] - _cy;
+		    radial_vec = radial_vec/fnorm(radial_vec);
+		    return fdot(radial_vec, dir)*fdot(radial_vec, dir);
+		}
+		
 	public:
 		// Creates a periodic potential in a region.
 		// world - pointer to world.
@@ -53,7 +76,7 @@ namespace SAPHRON
 		// dir   - constraint direction.
 		// index - dimension (x = 0, y = 1, z = 2).
 		// lim   - Limits of constraint along specified dimension.
-		PeriodicPotentialC(
+		HedgehogC(
 			World* world, 
 			double coeff, 
 			Director dir, 
@@ -63,24 +86,21 @@ namespace SAPHRON
 		_lim(lim), _pcount(0), _potential(0)
 		{
 			using namespace arma;
+			auto H = world->GetHMatrix();
+			_cx = .5*(H(0,0) - 0.0);
+			_cy = .5*(H(1,1) - 0.0);
 
+			printf("_cx = %f, _cy = %f\n", _cx, _cy);
 			// Go through world particles and observe.
 			for(auto& p : *world)
 			{
 				p->AddObserver(this);
-				if(IsInRegion(p->GetPosition()))
+				if(IsAtBoundary(p->GetPosition()))
 				{
-					auto& u = p->GetDirector();
-					_potential += fdot(u, _dir)*fdot(u, _dir);
+					_potential += BoundaryEnergy(p->GetPosition(), p->GetDirector());
 				}
 			}
 		}
-
-		// void UpdateDirection(Director dir)
-		// {
-		// 	_dir[0] = dir[0];
-		// 	_dir[1] = dir[1];
-		// }
 
 		double EvaluateEnergy() const override 
 		{
@@ -98,10 +118,11 @@ namespace SAPHRON
 			
 			// If only director has changed, check if it's in the region
 			// and update.
-			if(pEvent.director && IsInRegion(pos))
+			if(pEvent.director && IsAtBoundary(pos))
 			{
 				auto& pdir = pEvent.GetOldDirector();
-				_potential += fdot(dir,_dir)*fdot(dir,_dir) - fdot(pdir,_dir)*fdot(pdir,_dir);
+				_potential += BoundaryEnergy(pos, dir) -
+				    BoundaryEnergy(pos, pdir);
 				return;
 			}
 			else if(pEvent.position)
@@ -113,33 +134,33 @@ namespace SAPHRON
 				// 2. Particle previously in region and still in region 
 				//    (we don't do anything since nothing's changed).
 				// 3. Particle previously in region but now not in region.
-				if(!IsInRegion(ppos) && IsInRegion(pos))
+				if(!IsAtBoundary(ppos) && IsAtBoundary(pos))
 				{
-					_potential += fdot(dir,_dir)*fdot(dir,_dir);
+				    _potential += BoundaryEnergy(pos, dir);
 				}
-				else if(IsInRegion(ppos) && !IsInRegion(pos))
+				else if(IsAtBoundary(ppos) && !IsAtBoundary(pos))
 				{
-					_potential -= fdot(dir,_dir)*fdot(dir,_dir);
+				    _potential += BoundaryEnergy(pos, dir);
 				}
 			}			
 		}
 
 		void UpdateConstraint(const int iter)
 		{			
-			if ( iter % 1000 == 0 )
-			{
-				printf("UpdateConstraint at iter = %d", iter);
-				Director newdir;
-				newdir[0] = -_dir[1];
-				newdir[1] = _dir[0];
-				_dir[0] = newdir[0];
-				_dir[1] = newdir[1];
-			}
+			/* if ( iter % 1000 == 0 ) */
+			/* { */
+			/* 	printf("UpdateConstraint at iter = %d", iter); */
+			/* 	Director newdir; */
+			/* 	newdir[0] = -_dir[1]; */
+			/* 	newdir[1] = _dir[0]; */
+			/* 	_dir[0] = newdir[0]; */
+			/* 	_dir[1] = newdir[1]; */
+			/* } */
 		}
 
 		void Serialize(Json::Value& json) const override
 		{
-			json["type"] = "PeriodicPotential";
+			json["type"] = "Hedgehog";
 			json["coefficient"] = _coeff;
 			json["director"][0] = _dir[0];
 			json["director"][1] = _dir[1];

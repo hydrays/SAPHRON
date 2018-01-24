@@ -19,7 +19,7 @@ for ( temperature in seq(0.5, 20, by=0.5) )
     cmd4 <- paste("cp ../../build/saphron", FolderName)
     system(cmd4)
 
-    runcmd <- paste("cd", FolderName, "; screen -d -m ../../build/saphron ", out, "; cd ..")
+    runcmd <- paste("cd", FolderName, "; screen -d -m ../../../build/saphron ", out, "; cd ..")
     ##cat(paste("sleep ", rtime, "; cd", FolderName, "; PhysModel; cd .."), file="run")
     ##runcmd <- paste("screen -d -m ", FolderName, "/PhysModel", sep='')
     ##runcmd <- paste("bsub ", FolderName, "/run -o output_", i, sep='')	
