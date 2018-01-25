@@ -16,10 +16,10 @@
 		"constraints" : 
 		[
 			{
-				"coefficient" : 10000,
+				"coefficient" : 10,
 				"director" : [ 1, 0, 0 ],
 				"index" : 0,
-				"limits" : [ 3, 17 ],
+				"limits" : [ 2, 18 ],
 				"type" : "PlanarSquare",
 				"world" : 0
 			}
@@ -31,7 +31,7 @@
 				"dw" : 10,
 				"eps0" : 1,
 				"epsE" : 1,
-				"epsS" : 10,
+				"epsS" : 6,
 				"lengths" : [ 0.9, 0.9 ],
 				"mu" : 2,
 				"nu" : 1,
@@ -41,7 +41,7 @@
 			}
 		]
 	},
-	"iterations" : 10000,
+	"iterations" : 6000,
 	"moves" : 
 	[
 		{
