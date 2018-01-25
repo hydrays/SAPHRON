@@ -20,7 +20,7 @@
 				"director" : [ 0, 1, 0 ],
 				"index" : 0,
 				"limits" : [ 6, 8 ],
-				"type" : "DirectorRestriction",
+				"type" : "PeriodicPotential",
 				"world" : 0
 			}
 		],

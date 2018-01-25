@@ -8,14 +8,14 @@
 namespace SAPHRON
 {
 	// Class for applying periodic potential
-	class HedgehogC : public Constraint, public ParticleObserver
+	class PlanarSquareC : public Constraint, public ParticleObserver
 	{
 	private:
 		// Penalty coefficient.
 		double _coeff; 
 
 		// Center of circle
-		double _cx, _cy;
+		double _xmax, _ymax;
 		    
 		// Preferred direction.
 		Director _dir;
@@ -49,36 +49,27 @@ namespace SAPHRON
 			return true;
 		}
 
-		bool IsAtBoundary(const Position& pos)
-		{
-		    double r = sqrt((pos[0] - _cx)*(pos[0] - _cx) + (pos[1] - _cy)*(pos[1] - _cy));
-		    double dr = 0.5;
-		    double r0 = 6;
-		    if( (r>r0-dr) && (r<r0+dr) )
-			//if( r>r0 )
-			return true;
-		    else
-			return false;
-		}
-
 		double BoundaryEnergy(const Position& pos, const Director& dir)
 		{
-		    Director radial_vec;
-		    radial_vec[0] = pos[0] - _cx;
-		    radial_vec[1] = pos[1] - _cy;
-		    radial_vec = radial_vec/fnorm(radial_vec);
-		    return fdot(radial_vec, dir)*fdot(radial_vec, dir);
-		}
-		
-		double BoundaryEnergy2(const Position& pos, const Director& dir)
-		{
-		    Director radial_vec, tangent_vec;
-		    radial_vec[0] = pos[0] - _cx;
-		    radial_vec[1] = pos[1] - _cy;
-		    radial_vec = radial_vec/fnorm(radial_vec);
-		    tangent_vec[0] = -radial_vec[1];
-		    tangent_vec[1] = radial_vec[0];
-		    return fdot(tangent_vec, dir)*fdot(tangent_vec, dir);
+		    double e;
+		    Director vec;
+		    if(pos[0] < _lim[0] || pos[0] > _lim[1])
+		    {
+			vec[0] = 0.0;
+			vec[1] = 1.0;
+			e = fdot(vec, dir)*fdot(vec, dir);
+		    }
+		    else if(pos[1] < _lim[0] || pos[1] > _lim[1])
+		    {
+			vec[0] = 1.0;
+			vec[1] = 0.0;
+			e = fdot(vec, dir)*fdot(vec, dir);
+		    }
+		    else
+		    {
+			e = 0.0;
+		    }
+		    return e;
 		}
 		
 	public:
@@ -88,7 +79,7 @@ namespace SAPHRON
 		// dir   - constraint direction.
 		// index - dimension (x = 0, y = 1, z = 2).
 		// lim   - Limits of constraint along specified dimension.
-		HedgehogC(
+	PlanarSquareC(
 			World* world, 
 			double coeff, 
 			Director dir, 
@@ -99,19 +90,15 @@ namespace SAPHRON
 		{
 			using namespace arma;
 			auto H = world->GetHMatrix();
-			_cx = .5*(H(0,0) - 0.0);
-			_cy = .5*(H(1,1) - 0.0);
+			_xmax = H(0,0);
+			_ymax = H(1,1);
 
-			printf("_cx = %f, _cy = %f\n", _cx, _cy);
+			printf("_xmax = %f, _ymax = %f\n", _xmax, _ymax);
 			// Go through world particles and observe.
 			for(auto& p : *world)
 			{
 				p->AddObserver(this);
-				if(IsAtBoundary(p->GetPosition()))
-				{
-				    //_potential += BoundaryEnergy(p->GetPosition(), p->GetDirector());
-				    _potential += BoundaryEnergy2(p->GetPosition(), p->GetDirector());
-				}
+				_potential += BoundaryEnergy(p->GetPosition(), p->GetDirector());
 			}
 		}
 
@@ -131,34 +118,16 @@ namespace SAPHRON
 			
 			// If only director has changed, check if it's in the region
 			// and update.
-			if(pEvent.director && IsAtBoundary(pos))
+			if(pEvent.director)
 			{
 				auto& pdir = pEvent.GetOldDirector();
-				//_potential += BoundaryEnergy(pos, dir) -
-				//    BoundaryEnergy(pos, pdir);
-				_potential += BoundaryEnergy2(pos, dir) -
-				    BoundaryEnergy2(pos, pdir);
+				_potential += BoundaryEnergy(pos, dir) -
+				    BoundaryEnergy(pos, pdir);
 				return;
 			}
 			else if(pEvent.position)
 			{
-				auto& ppos = pEvent.GetOldPosition();
-				
-				// Three possible cases on a position change:
-				// 1. Particle previously not in region but now in region. 
-				// 2. Particle previously in region and still in region 
-				//    (we don't do anything since nothing's changed).
-				// 3. Particle previously in region but now not in region.
-				if(!IsAtBoundary(ppos) && IsAtBoundary(pos))
-				{
-				    //_potential += BoundaryEnergy(pos, dir);
-				    _potential += BoundaryEnergy2(pos, dir);
-				}
-				else if(IsAtBoundary(ppos) && !IsAtBoundary(pos))
-				{
-				    //_potential += BoundaryEnergy(pos, dir);
-				    _potential += BoundaryEnergy2(pos, dir);
-				}
+			    // do nothing
 			}			
 		}
 
@@ -177,7 +146,7 @@ namespace SAPHRON
 
 		void Serialize(Json::Value& json) const override
 		{
-			json["type"] = "Hedgehog";
+			json["type"] = "PlanarSquare";
 			json["coefficient"] = _coeff;
 			json["director"][0] = _dir[0];
 			json["director"][1] = _dir[1];

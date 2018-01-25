@@ -6,6 +6,7 @@
 #include "PeriodicPotentialC.h"
 #include "HedgehogC.h"
 #include "PasquaMembraneC.h"
+#include "PlanarSquareC.h"
 #include "schema.h"
 
 using namespace Json;
@@ -114,6 +115,34 @@ namespace SAPHRON
 
 			auto w = wm->GetWorld(json["world"].asInt());
 			c = new HedgehogC(w, coeff, dir, index, lim);
+		}
+		else if(type == "PlanarSquare")
+		{
+			reader.parse(JsonSchema::PlanarSquareC, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs. 
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			auto coeff = json["coefficient"].asDouble();
+			Director dir{
+				json["director"][0].asDouble(), 
+				json["director"][1].asDouble()};
+
+			auto index = json["index"].asInt();
+
+			std::array<double, 2> lim{{
+				json["limits"][0].asDouble(),
+				json["limits"][1].asDouble()}};
+
+			// Make sure min < max. 
+			if(lim[0] > lim[1])
+				throw BuildException({path + ": Limit minimum cannot exceed maximum."});
+
+			auto w = wm->GetWorld(json["world"].asInt());
+			c = new PlanarSquareC(w, coeff, dir, index, lim);
 		}
 		else if(type == "PasquaMembrane")
 		{

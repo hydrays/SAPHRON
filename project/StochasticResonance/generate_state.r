@@ -1,12 +1,12 @@
 require(jsonlite)
 
-sys <- "sys2_mc"
+sys <- "sys3_mc"
 js <- read_json(paste(sys, '.json', sep=''))
 
 ##n <- 32800
-n <- 328*25
-xmax <- 50
-ymax <- 50
+n <- 328*4
+xmax <- 20
+ymax <- 20
 x <- runif(n, min=0, max=xmax)
 y <- runif(n, min=0, max=ymax)
 theta <- runif(n, min=0, max=2*pi)
@@ -46,5 +46,5 @@ js$worlds[[1]]$periodic$x <- TRUE
 js$worlds[[1]]$periodic$y <- TRUE
 js$worlds[[1]]$periodic$z <- FALSE
 
-write_json(js, 'sys3_position.json', pretty = TRUE, auto_unbox=TRUE)
+write_json(js, 'sys4_position.json', pretty = TRUE, auto_unbox=TRUE)
 

@@ -20,7 +20,7 @@
 				"director" : [ 1, 0, 0 ],
 				"index" : 0,
 				"limits" : [ 0, 10 ],
-				"type" : "PeriodicPotential",
+				"type" : "Hedgehog",
 				"world" : 0
 			}
 		],
