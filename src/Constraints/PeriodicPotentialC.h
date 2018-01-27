@@ -64,6 +64,7 @@ namespace SAPHRON
 		{
 			using namespace arma;
 
+			_dir = _dir/fnorm(_dir);
 			// Go through world particles and observe.
 			for(auto& p : *world)
 			{
@@ -126,7 +127,7 @@ namespace SAPHRON
 
 		void UpdateConstraint(const int iter)
 		{			
-			if ( iter % 1000 == 0 )
+			if ( iter % 3000 == 0 )
 			{
 				printf("UpdateConstraint at iter = %d", iter);
 				Director newdir;
