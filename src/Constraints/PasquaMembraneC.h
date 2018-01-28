@@ -84,7 +84,12 @@ namespace SAPHRON
 		{
 
 		}
-		
+
+		void ConstraintMove(World& world)
+		{
+
+		}
+
 		void Serialize(Json::Value& json) const override
 		{
 			json["type"] = "PasquaMembrane";

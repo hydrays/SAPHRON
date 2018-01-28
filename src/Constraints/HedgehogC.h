@@ -175,6 +175,13 @@ namespace SAPHRON
 			/* } */
 		}
 
+
+		void ConstraintMove(World& world)
+		{
+			printf("ConstraintMove for Hedgehog. \n");
+			printf("Do nothing here. \n");
+		}		
+
 		void Serialize(Json::Value& json) const override
 		{
 			json["type"] = "Hedgehog";

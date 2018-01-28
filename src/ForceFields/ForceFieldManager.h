@@ -135,5 +135,7 @@ namespace SAPHRON
 
 		// Resets the electrostatic forcefield (to nothing).
 		void UpdateConstraint(const int iter);
+
+		void ConstraintMove(World& world);
 	};
 }

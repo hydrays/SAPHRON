@@ -178,6 +178,12 @@ namespace SAPHRON
 
 		}
 
+		void ConstraintMove(World& world)
+		{
+			printf("ConstraintMove for DirectRestriction. \n");
+			printf("Do nothing here. \n");
+		}	
+
 		void Serialize(Json::Value& json) const override
 		{
 			json["type"] = "DirectorRestriction";

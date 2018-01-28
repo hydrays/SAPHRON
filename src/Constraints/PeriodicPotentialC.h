@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "Constraint.h"
+#include "../Utils/Helpers.h"
 #include "../Particles/Particle.h"
 #include "../Worlds/World.h"
 #include <armadillo>
@@ -127,7 +128,7 @@ namespace SAPHRON
 
 		void UpdateConstraint(const int iter)
 		{			
-			if ( iter % 3000 == 0 )
+			if ( iter % 2000 == 0 )
 			{
 				printf("UpdateConstraint at iter = %d", iter);
 				Director newdir;
@@ -137,6 +138,57 @@ namespace SAPHRON
 				_dir[1] = newdir[1];
 			}
 		}
+
+		void ConstraintMove(World& world)
+		{
+			printf("ConstraintMove for PeriodicPotential. \n");
+			double dt = 1e-3;
+			Director vec;
+
+			for(auto& particle : world)
+			{
+				auto& dir = particle->GetDirector();
+				auto& pos = particle->GetPosition();
+		    
+			    if(pos[0] < _lim[0] || pos[0] > _lim[1])
+			    {
+				vec[0] = 0.0;
+				vec[1] = 0.0;
+			    }
+			    else if(pos[1] < _lim[0] || pos[1] > _lim[1])
+			    {
+				vec[0] = 0.0;
+				vec[1] = 0.0;
+			    }
+			    else
+			    {
+				vec = _dir;
+			    }
+					auto deg = 2.0*_coeff*fdot(dir,vec)*(dir[0]*vec[1] - dir[1]*vec[0])*dt;
+					if (deg > 0.2)
+						deg = 0.2;
+					else if (deg < -0.2)
+						deg = -0.2;
+					else
+					{
+
+					}
+					Matrix2D R = GenRotationMatrix(deg);
+
+					// First rotate particle director.
+					particle->SetDirector(R*particle->GetDirector());
+
+					// Get COM.
+					auto& com = particle->GetPosition();
+
+					// Rotate particle children if it has any 
+					for(auto& child : *particle)
+					{
+						child->SetPosition(R*(child->GetPosition()-com) + com);
+						child->SetDirector(R*child->GetDirector());
+					}
+			}
+		}	
 
 		void Serialize(Json::Value& json) const override
 		{

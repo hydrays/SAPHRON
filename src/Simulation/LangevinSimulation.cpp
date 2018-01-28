@@ -16,6 +16,12 @@ namespace SAPHRON
 			// auto* move = _mmanager->SelectRandomMove();
 			// move->Perform(_wmanager, _ffmanager, MoveOverride::None);
 		// }
+		_ffmanager->UpdateConstraint(this->GetIteration());
+
+		for(auto& world : *_wmanager)
+		{
+			_ffmanager->ConstraintMove(*world);
+		}
 
 		auto* move = _mmanager->SelectRandomMove();
 		if ( move->GetName().compare("Rotate") != 0 )

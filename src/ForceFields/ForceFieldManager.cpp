@@ -487,6 +487,13 @@ namespace SAPHRON
 
 	void ForceFieldManager::UpdateConstraint(const int iter)
 	{
-		_constraints[0][0]->UpdateConstraint(iter);
+		for(auto& c : _constraints[0])
+			c->UpdateConstraint(iter);
 	}
+
+	void ForceFieldManager::ConstraintMove(World& world)
+	{
+		for(auto& c : _constraints[0])
+			c->ConstraintMove(world);
+	}	
 }

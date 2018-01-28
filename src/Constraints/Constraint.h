@@ -56,5 +56,6 @@ namespace SAPHRON
 		virtual ~Constraint(){}
 
 		virtual void UpdateConstraint(const int iter) {}
+		virtual void ConstraintMove(World& world) {}
 	};
 }

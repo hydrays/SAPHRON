@@ -201,7 +201,7 @@ namespace SAPHRON
 							 ForceFieldManager* ffm)
 		{
 
-			double dt = 1e-4;
+			double dt = 1e-3;
 			// Get random particle from random world.
 			World* world = wm->GetWorld(0);
 
