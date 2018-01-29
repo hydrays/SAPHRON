@@ -6,8 +6,14 @@ namespace SAPHRON
 	{
 
 		//printf("inside montecarlosimulation->iterate: 00\n");
+		//_ffmanager->UpdateConstraint(this->GetIteration());
 		_ffmanager->UpdateConstraint(this->GetIteration());
-		
+
+		for(auto& world : *_wmanager)
+		{
+			_ffmanager->ConstraintMove(*world);
+		}
+
 		_mmanager->ResetMoveAcceptances();
 		
 		// Select random move and perform.

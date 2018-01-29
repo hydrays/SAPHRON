@@ -179,7 +179,51 @@ namespace SAPHRON
 		void ConstraintMove(World& world)
 		{
 			printf("ConstraintMove for Hedgehog. \n");
-			printf("Do nothing here. \n");
+			double dt = 1e-3;
+			Director vec;
+			Director tangent_vec;
+			// moveA();
+			for(auto& particle : world)
+			{
+				auto& dir = particle->GetDirector();
+				auto& pos = particle->GetPosition();
+		    	double r = sqrt((pos[0] - _cx)*(pos[0] - _cx) + (pos[1] - _cy)*(pos[1] - _cy));
+		    	double dr = 0.5;
+		    	double r0 = 20.0;
+		    	if( (r>r0-dr) && (r<r0+dr) )
+				{
+					vec[0] = pos[0] - _cx;
+		    		vec[1] = pos[1] - _cy;
+		    		vec = vec/fnorm(vec);
+		    		tangent_vec[0] = -vec[1];
+		    		tangent_vec[1] = vec[0];
+		    		vec = tangent_vec;
+		    		
+				auto deg = 2.0*100.0*fdot(dir,vec)*(dir[0]*vec[1] - dir[1]*vec[0])*dt;
+				if (deg > 0.2)
+					deg = 0.2;
+				else if (deg < -0.2)
+					deg = -0.2;
+				else
+				{
+					
+				}
+				Matrix2D R = GenRotationMatrix(deg);
+
+				// First rotate particle director.
+				particle->SetDirector(R*particle->GetDirector());
+
+				// Get COM.
+				auto& com = particle->GetPosition();
+
+				// Rotate particle children if it has any 
+				for(auto& child : *particle)
+				{
+					child->SetPosition(R*(child->GetPosition()-com) + com);
+					child->SetDirector(R*child->GetDirector());
+				}
+			}
+			}
 		}		
 
 		void Serialize(Json::Value& json) const override
