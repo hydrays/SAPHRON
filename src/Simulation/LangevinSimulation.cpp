@@ -16,7 +16,8 @@ namespace SAPHRON
 			// auto* move = _mmanager->SelectRandomMove();
 			// move->Perform(_wmanager, _ffmanager, MoveOverride::None);
 		// }
-		_ffmanager->UpdateConstraint(this->GetIteration());
+		//_ffmanager->UpdateConstraint(this->GetIteration());
+		_ffmanager->ChangeDirection(this->GetIteration());
 
 		for(auto& world : *_wmanager)
 		{

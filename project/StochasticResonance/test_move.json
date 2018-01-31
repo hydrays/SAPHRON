@@ -6,56 +6,40 @@
     }
   },
   "forcefields": {
-    "constraints": [
-      {
-        "coefficient": 0.0,
-        "director": [
-          1,
-          1,
-          0
-        ],
-        "index": 0,
-        "limits": [
-          0,
-          14
-        ],
-        "type": "PeriodicPotential",
-        "world": 0
-      },
-      {
-        "coefficient": 2000,
-        "director": [
-          1,
-          0,
-          0
-        ],
-        "index": 0,
-        "limits": [
-          2,
-          10
-        ],
-        "type": "PlanarSquare",
-        "world": 0
-      }
-    ],
     "nonbonded": [
       {
-        "diameters" : [ 0.5, 0.5 ],
-        "dw" : 15,
-        "eps0" : 1,
-        "epsE" : 1,
-        "epsS" : 3,
-        "lengths" : [ 1.60, 1.60],
-        "mu" : 2,
-        "nu" : 1,
-        "rcut" : [ 5 ],
-        "species" : [ "GB", "GB" ],
-        "type" : "GayBerne"
+        "diameters": [
+          0.5,
+          0.5
+        ],
+        "dw": 8,
+        "eps0": 1,
+        "epsE": 1,
+        "epsS": 15,
+        "lengths": [
+          1.6,
+          1.6
+        ],
+        "mu": 2,
+        "nu": 1,
+        "rcut": [
+          5
+        ],
+        "species": [
+          "GB",
+          "GB"
+        ],
+        "type": "GayBerne"
       }
     ]
   },
   "iterations": 5000,
   "moves": [
+    {
+      "dx": 0.08,
+      "type": "Translate",
+      "weight": 50
+    },
     {
       "maxangle": 0.2,
       "type": "Rotate",
@@ -98,7 +82,7 @@
       "type": "JSON"
     }
   ],
-  "simtype": "Langevin",
+  "simtype": "MonteCarlo",
   "units": "reduced",
   "worlds": [
     {
@@ -109,8 +93,8 @@
         ]
       ],
       "dimensions": [
-        12,
-        12,
+        12.5,
+        12.5,
         0
       ],
       "nlist_cutoff": 5,
@@ -3867,12 +3851,12 @@
         ]
       ],
       "periodic": {
-        "x": false,
-        "y": false,
-        "z": false
+        "x": true,
+        "y": true,
+        "z": true
       },
       "skin_thickness": 5,
-      "temperature": 3,
+      "temperature": 1,
       "type": "Simple"
     }
   ]

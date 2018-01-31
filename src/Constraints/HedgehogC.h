@@ -188,17 +188,17 @@ namespace SAPHRON
 				auto& dir = particle->GetDirector();
 				auto& pos = particle->GetPosition();
 		    	double r = sqrt((pos[0] - _cx)*(pos[0] - _cx) + (pos[1] - _cy)*(pos[1] - _cy));
-		    	double dr = 0.5;
-		    	double r0 = 20.0;
+		    	double dr = 5.5;
+		    	double r0 = 10.0;
 		    	if( (r>r0-dr) && (r<r0+dr) )
 				{
 					vec[0] = pos[0] - _cx;
 		    		vec[1] = pos[1] - _cy;
 		    		vec = vec/fnorm(vec);
-		    		tangent_vec[0] = -vec[1];
-		    		tangent_vec[1] = vec[0];
-		    		vec = tangent_vec;
-		    		
+		    		// tangent_vec[0] = -vec[1];
+		    		// tangent_vec[1] = vec[0];
+		    		// vec = tangent_vec;
+
 				auto deg = 2.0*100.0*fdot(dir,vec)*(dir[0]*vec[1] - dir[1]*vec[0])*dt;
 				if (deg > 0.2)
 					deg = 0.2;

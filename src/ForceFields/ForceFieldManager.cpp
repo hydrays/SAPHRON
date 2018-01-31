@@ -157,7 +157,7 @@ namespace SAPHRON
 		return energy;
 	}
 
-	double ForceFieldManager::EvaluateTorque(const Particle& particle) const
+	double ForceFieldManager::EvaluateTorque(const Particle& particle)
 	{
 		World* world = particle.GetWorld();
 		unsigned wid = (world == nullptr) ? 0 : world->GetID();
@@ -177,6 +177,11 @@ namespace SAPHRON
 				torque += ff->EvaluateTorque(particle, *neighbor, rij, wid);
 			}
 		}
+
+		//add directional potential here
+		auto& dir = particle.GetDirector();
+		_pvec = _pvec/fnorm(_pvec);
+		torque += 2.0*fdot(dir,_pvec)*(dir[0]*_pvec[1] - dir[1]*_pvec[0]);
 		return torque;
 	}
 
@@ -495,5 +500,18 @@ namespace SAPHRON
 	{
 		for(auto& c : _constraints[0])
 			c->ConstraintMove(world);
+	}	
+
+	void ForceFieldManager::ChangeDirection(const int iter)
+	{
+		if ( iter % 5000 == 0 )
+			{
+				printf("ChangeDirection at iter = %d", iter);
+				Director newdir;
+				newdir[0] = -_pvec[1];
+				newdir[1] = _pvec[0];
+				_pvec[0] = newdir[0];
+				_pvec[1] = newdir[1];
+			}
 	}	
 }

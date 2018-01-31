@@ -8,6 +8,21 @@
   "forcefields": {
     "constraints": [
       {
+        "coefficient": 1,
+        "director": [
+          1,
+          1,
+          0
+        ],
+        "index": 0,
+        "limits": [
+          22,
+          28
+        ],
+        "type": "PeriodicPotential",
+        "world": 0
+      },
+      {
         "coefficient": 0,
         "director": [
           1,
@@ -16,23 +31,23 @@
         ],
         "index": 0,
         "limits": [
-          2,
-          10.5
+          20,
+          30
         ],
-        "type": "Hedgehog",
+        "type": "PlanarSquare",
         "world": 0
       }
     ],
     "nonbonded": [
       {
         "diameters": [
-          0.5,
-          0.5
+          0.65,
+          0.65
         ],
         "dw": 15,
         "eps0": 1,
         "epsE": 1,
-        "epsS": 15,
+        "epsS": 5,
         "lengths": [
           1.6,
           1.6
@@ -49320,7 +49335,7 @@
         "z" : true
       },
       "skin_thickness" : 5,
-      "temperature" : 2,
+      "temperature" : 1,
       "type" : "Simple"
     }
   ]

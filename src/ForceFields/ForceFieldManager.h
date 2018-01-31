@@ -39,12 +39,19 @@ namespace SAPHRON
 		FFMap _uniquenbffs;
 		FFMap _uniquebffs;
 
+		Director _pvec;
+		//double _coeff;
+
 	public:
 		typedef FFMap::iterator iterator;
 		typedef FFMap::const_iterator const_iterator;
 		
 		ForceFieldManager() : 
-		_nonbondedforcefields(), _bondedforcefields(), _electroff(nullptr), _constraints(0) {}
+		_nonbondedforcefields(), _bondedforcefields(), _electroff(nullptr), _constraints(0) {
+			_pvec[0] = -1.0;
+			_pvec[1] = 1.0;
+			_pvec = _pvec/fnorm(_pvec);
+		}
 
 		// Adds a non-bonded forcefield to the manager.
 		void AddNonBondedForceField(std::string p1type, std::string p2type, ForceField& ff);
@@ -91,7 +98,7 @@ namespace SAPHRON
 		// Evaluate constraint energy of entire world.
 		double EvaluateConstraintEnergy(const World& world) const;
 
-		double EvaluateTorque(const Particle& particle) const;
+		double EvaluateTorque(const Particle& particle);
 
 		// Evaluates the intermolecular energy of a particle.
 		// This includes constraint energy. 
@@ -137,5 +144,7 @@ namespace SAPHRON
 		void UpdateConstraint(const int iter);
 
 		void ConstraintMove(World& world);
+
+		void ChangeDirection(const int iter);
 	};
 }

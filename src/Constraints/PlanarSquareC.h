@@ -146,9 +146,11 @@ namespace SAPHRON
 
 		void ConstraintMove(World& world)
 		{
-			printf("ConstraintMove for PlanarSquare. \n");
+			//printf("ConstraintMove for PlanarSquare. \n");
 			double dt = 1e-3;
 			Director vec;
+			double dr = 0.0;
+			int change_flag;
 			// moveA();
 			for(auto& particle : world)
 			{
@@ -159,19 +161,43 @@ namespace SAPHRON
 			    {
 				vec[0] = 0.0;
 				vec[1] = 1.0;
+				change_flag = 1;
 			    }
 			    else if(pos[1] < _lim[0] || pos[1] > _lim[1])
 			    {
 				vec[0] = 1.0;
 				vec[1] = 0.0;
+				change_flag = 1;
 			    }
 			    else
 			    {
-				vec[0] = 0.0;
-				vec[1] = 0.0;
+				change_flag = 0;
 			    }
 
-				auto deg = 2.0*_coeff*fdot(dir,vec)*(dir[0]*vec[1] - dir[1]*vec[0])*dt;
+			 //    if( (pos[0] > _lim[0]+2.0*dr) && 
+			 //    	(pos[0] < _lim[1]-2.0*dr) && 
+			 //    	(fabs(pos[1]-_lim[0])<dr || fabs(pos[1]-_lim[1])<dr) )
+			 //    {
+				// vec[0] = 1.0;
+				// vec[1] = 0.0;
+				// change_flag = 1;
+			 //    }
+			 //    else if( (pos[1] > _lim[0]+2.0*dr) && 
+			 //    	(pos[1] < _lim[1]-2.0*dr) && 
+			 //    	(fabs(pos[0]-_lim[0])<dr || fabs(pos[0]-_lim[1])<dr) )
+			 //    {
+				// vec[0] = 0.0;
+				// vec[1] = 1.0;
+			 //    change_flag = 1;
+				// }
+				// else
+				// {
+				// 	change_flag = 0;
+				// }
+
+				if (change_flag==1)
+				{
+				auto deg = 2.0*1000.0*fdot(dir,vec)*(dir[0]*vec[1] - dir[1]*vec[0])*dt;
 				if (deg > 0.2)
 					deg = 0.2;
 				else if (deg < -0.2)
@@ -194,6 +220,7 @@ namespace SAPHRON
 					child->SetPosition(R*(child->GetPosition()-com) + com);
 					child->SetDirector(R*child->GetDirector());
 				}
+			}
 			}
 		}	
 

@@ -8,7 +8,22 @@
   "forcefields": {
     "constraints": [
       {
-        "coefficient": 200,
+        "coefficient": 1,
+        "director": [
+          1,
+          1,
+          0
+        ],
+        "index": 0,
+        "limits": [
+          4,
+          12
+        ],
+        "type": "PeriodicPotential",
+        "world": 0
+      },
+      {
+        "coefficient": 0,
         "director": [
           1,
           0,
@@ -25,29 +40,45 @@
     ],
     "nonbonded": [
       {
-        "diameters" : [ 0.25, 0.25 ],
-        "dw" : 10,
-        "eps0" : 1,
-        "epsE" : 1,
-        "epsS" : 3,
-        "lengths" : [ 0.80, 0.80],
-        "mu" : 2,
-        "nu" : 1,
-        "rcut" : [ 5 ],
-        "species" : [ "GB", "GB" ],
-        "type" : "GayBerne"
+        "diameters": [
+          0.5,
+          0.5
+        ],
+        "dw": 15,
+        "eps0": 1,
+        "epsE": 1,
+        "epsS": 5,
+        "lengths": [
+          3,
+          3
+        ],
+        "mu": 2,
+        "nu": 1,
+        "rcut": [
+          5
+        ],
+        "species": [
+          "GB",
+          "GB"
+        ],
+        "type": "GayBerne"
       }
     ]
   },
-  "iterations": 10000,
+  "iterations": 5000,
   "moves": [
+    {
+      "dx": 0.08,
+      "type": "Translate",
+      "weight": 50
+    },
     {
       "maxangle": 0.2,
       "type": "Rotate",
       "weight": 50
     }
   ],
-  "mpi": 1089,
+  "mpi": 625,
   "observers": [
     {
       "colwidth": 15,
@@ -83,7 +114,7 @@
       "type": "JSON"
     }
   ],
-  "simtype": "Langevin",
+  "simtype": "MonteCarlo",
   "units": "reduced",
   "worlds": [
     {
@@ -6636,12 +6667,12 @@
         ]
       ],
       "periodic": {
-        "x": false,
-        "y": false,
-        "z": false
+        "x": true,
+        "y": true,
+        "z": true
       },
       "skin_thickness": 5,
-      "temperature": 0.3,
+      "temperature": 1.0,
       "type": "Simple"
     }
   ]

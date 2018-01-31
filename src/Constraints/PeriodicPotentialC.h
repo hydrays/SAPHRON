@@ -144,6 +144,7 @@ namespace SAPHRON
 			printf("ConstraintMove for PeriodicPotential. \n");
 			double dt = 1e-3;
 			Director vec;
+			int change_flag;
 
 			for(auto& particle : world)
 			{
@@ -154,16 +155,21 @@ namespace SAPHRON
 			    {
 				vec[0] = 0.0;
 				vec[1] = 0.0;
+				change_flag = 0;
 			    }
 			    else if(pos[1] < _lim[0] || pos[1] > _lim[1])
 			    {
 				vec[0] = 0.0;
 				vec[1] = 0.0;
+				change_flag = 0;
 			    }
 			    else
 			    {
 				vec = _dir;
+				change_flag = 1;
 			    }
+			    if (change_flag==1)
+				{
 					auto deg = 2.0*_coeff*fdot(dir,vec)*(dir[0]*vec[1] - dir[1]*vec[0])*dt;
 					if (deg > 0.2)
 						deg = 0.2;
@@ -187,6 +193,7 @@ namespace SAPHRON
 						child->SetPosition(R*(child->GetPosition()-com) + com);
 						child->SetDirector(R*child->GetDirector());
 					}
+				}
 			}
 		}	
 
