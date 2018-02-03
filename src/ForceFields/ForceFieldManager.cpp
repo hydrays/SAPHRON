@@ -1,10 +1,14 @@
 #include "ForceFieldManager.h"
 #include "../Constraints/Constraint.h"
+#include "../Validator/ObjectRequirement.h"
+#include "schema.h"
 #include "config.h"
 #include <algorithm>
 #include <iostream>
 #include <utility>
 #include <stdexcept>
+
+using namespace Json;
 
 namespace SAPHRON
 {
@@ -180,8 +184,14 @@ namespace SAPHRON
 
 		//add directional potential here
 		auto& dir = particle.GetDirector();
-		_pvec = _pvec/fnorm(_pvec);
-		torque += 2.0*fdot(dir,_pvec)*(dir[0]*_pvec[1] - dir[1]*_pvec[0]);
+		auto& pos = particle.GetPosition();
+		if ((pos[0] > _lim[0]) && 
+			(pos[0] < _lim[1]) &&
+			(pos[1] > _lim[0]) &&
+			(pos[1] < _lim[1]))
+		{
+			torque += _coeff*fdot(dir,_pvec)*(dir[0]*_pvec[1] - dir[1]*_pvec[0]);
+		}
 		return torque;
 	}
 
@@ -425,6 +435,12 @@ namespace SAPHRON
 
 	void ForceFieldManager::Serialize(Json::Value& json) const
 	{
+		auto& ff = json["forcefields"];
+		ff["A"] = _A;
+		ff["T"] = _T;
+		ff["lim"][0] = _lim[0];
+		ff["lim"][1] = _lim[1];
+
 		auto& species = Particle::GetSpeciesList();
 
 		// Go through non-bonded FF.
@@ -496,22 +512,69 @@ namespace SAPHRON
 			c->UpdateConstraint(iter);
 	}
 
+	void ForceFieldManager::UpdateCoeff(const int iter)
+	{
+		_coeff = _A * sin(_prefactor*double(iter));
+	}
+
 	void ForceFieldManager::ConstraintMove(World& world)
 	{
 		for(auto& c : _constraints[0])
 			c->ConstraintMove(world);
 	}	
 
-	void ForceFieldManager::ChangeDirection(const int iter)
+	// void ForceFieldManager::ChangeDirection(const int iter)
+	// {
+	// 	if ( iter % 5000 == 0 )
+	// 		{
+	// 			printf("ChangeDirection at iter = %d", iter);
+	// 			Director newdir;
+	// 			newdir[0] = -_pvec[1];
+	// 			newdir[1] = _pvec[0];
+	// 			_pvec[0] = newdir[0];
+	// 			_pvec[1] = newdir[1];
+	// 		}
+	// }	
+
+	void ForceFieldManager::BuildForceFieldManager(const Value& json)
 	{
-		if ( iter % 5000 == 0 )
-			{
-				printf("ChangeDirection at iter = %d", iter);
-				Director newdir;
-				newdir[0] = -_pvec[1];
-				newdir[1] = _pvec[0];
-				_pvec[0] = newdir[0];
-				_pvec[1] = newdir[1];
-			}
-	}	
+		ObjectRequirement validator;
+		Value schema;
+		Reader reader;
+
+		reader.parse(JsonSchema::ForceFields, schema);
+		validator.Parse(schema, "#/forcefields");
+
+		_A = json["A"].asDouble();
+		_T = json["T"].asDouble();
+		_lim[0] = json["lim"][0].asDouble();
+		_lim[1] = json["lim"][1].asDouble();
+		_prefactor = 2.0*M_PI/_T;			
+
+		// // Loop through non-bonded.
+		// int i = 0;
+		// for(auto& ff : json["nonbonded"]) 
+		// {
+		// 	fflist.push_back(
+		// 		BuildNonBonded(ff, ffm, "#/forcefields/nonbonded/" + std::to_string(i))
+		// 		);
+		// 	++i;
+		// }
+
+		// // Set electrostatic.
+		// if(json.isMember("electrostatic"))
+		// 	fflist.push_back(
+		// 		BuildElectrostatic(json["electrostatic"], ffm, "#forcefields/electrostatic")
+		// 		);
+
+		// // Loop through bonded.
+		// i = 0;
+		// for(auto& ff : json["bonded"])
+		// {
+		// 	fflist.push_back(
+		// 		BuildBonded(ff, ffm, "#forcefields/bonded/" + std::to_string(i))
+		// 		);
+		// 	++i;
+		// }
+	}
 }

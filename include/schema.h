@@ -10,8 +10,7 @@ namespace SAPHRON
 		//INSERT_DEC_HERE
 		static std::string Constraints;
 		static std::string HedgehogC;
-		static std::string PeriodicPotential;
-                static std::string PlanarSquareC;
+		static std::string PlanarSquareC;
 		static std::string PeriodicPotentialC;
 		static std::string DirectorRestrictionC;
 		static std::string PasquaMembraneC;
@@ -25,6 +24,7 @@ namespace SAPHRON
 		static std::string Histogram;
 		static std::string DOSSimulation;
 		static std::string Simulation;
+		static std::string ExtGayBerneFF;
 		static std::string LebwohlLasherFF;
 		static std::string ModLennardJonesTSFF;
 		static std::string KernFrenkelFF;

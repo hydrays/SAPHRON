@@ -2,6 +2,20 @@
 	"type" : "object",
 	"varname" : "ForceFields",
 	"properties" : {
+		"A" : {
+			"type": "number"
+		},
+		"T" : {
+			"type": "number"
+		},
+		"lim" : {
+			"type" : "array",
+			"items" : {
+				"type" : "number"
+			},
+			"minItems" : 2,
+			"maxItems" : 2
+		},
 		"nonbonded" : {
 			"type": "array"
 		},

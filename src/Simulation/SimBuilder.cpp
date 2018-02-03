@@ -327,6 +327,10 @@ namespace SAPHRON
 			return false;
 		}
 
+		// Build forcefieldmanager.
+		PrintBoldNotice(" > Building forcefieldmanager...", _msgw);
+		_ffm.BuildForceFieldManager(root.get("forcefields", Json::arrayValue));
+
 		DumpNoticesToConsole(notices, "",_notw);
 		notices.clear();
 

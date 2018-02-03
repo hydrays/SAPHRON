@@ -40,7 +40,11 @@ namespace SAPHRON
 		FFMap _uniquebffs;
 
 		Director _pvec;
-		//double _coeff;
+		double _coeff;
+		double _A;
+		double _T;
+		std::array<double, 2> _lim;
+		double _prefactor;
 
 	public:
 		typedef FFMap::iterator iterator;
@@ -48,7 +52,7 @@ namespace SAPHRON
 		
 		ForceFieldManager() : 
 		_nonbondedforcefields(), _bondedforcefields(), _electroff(nullptr), _constraints(0) {
-			_pvec[0] = -1.0;
+			_pvec[0] = 1.0;
 			_pvec[1] = 1.0;
 			_pvec = _pvec/fnorm(_pvec);
 		}
@@ -143,8 +147,12 @@ namespace SAPHRON
 		// Resets the electrostatic forcefield (to nothing).
 		void UpdateConstraint(const int iter);
 
+		void UpdateCoeff(const int iter);
+
 		void ConstraintMove(World& world);
 
 		void ChangeDirection(const int iter);
+
+		void BuildForceFieldManager(const Json::Value& json);
 	};
 }
