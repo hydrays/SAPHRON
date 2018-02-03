@@ -197,7 +197,7 @@ namespace SAPHRON
 
 				if (change_flag==1)
 				{
-				auto deg = 2.0*1000.0*fdot(dir,vec)*(dir[0]*vec[1] - dir[1]*vec[0])*dt;
+				auto deg = _coeff*fdot(dir,vec)*(dir[0]*vec[1] - dir[1]*vec[0])*dt;
 				if (deg > 0.2)
 					deg = 0.2;
 				else if (deg < -0.2)
