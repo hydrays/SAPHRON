@@ -5,6 +5,7 @@
 #include "schema.h"
 #include "GayBerneFF.h"
 #include "LennardJonesFF.h"
+#include "LebwohlLasherFF.h"
 
 using namespace Json;
 
@@ -118,6 +119,20 @@ namespace SAPHRON
 
 			ff = new GayBerneFF(di, dj, li, lj, eps0, epsE, epsS, dw, rc, mu, nu);
 		}
+		else if(type == "LebwohlLasher")
+		{
+			reader.parse(JsonSchema::LebwohlLasherFF, schema);
+			validator.Parse(schema, path);
+
+			// Validate inputs.
+			validator.Validate(json, path);
+			if(validator.HasErrors())
+				throw BuildException(validator.GetErrors());
+
+			double eps = json["epsilon"].asDouble();
+			double gamma = json["gamma"].asDouble();
+			ff = new LebwohlLasherFF(eps, gamma);
+		}		
 		else if(type == "ExtGayBerne")
 		{
 			reader.parse(JsonSchema::GayBerneFF, schema);

@@ -197,7 +197,7 @@ namespace SAPHRON
 
 	EPTuple ForceFieldManager::EvaluateInterEnergy(const Particle& particle) const
 	{
-		//printf("inside ForceFieldManager->EvaluateInerEnergy: 00-0\n");
+		// printf("inside ForceFieldManager->EvaluateInerEnergy: 00-0\n");
 		if(_nonbondedforcefields.empty())
 			return EPTuple();
 
@@ -215,6 +215,8 @@ namespace SAPHRON
 			unsigned wid = (world == nullptr) ? 0 : world->GetID();
 			auto& neighbors = particle.GetNeighbors();
 			auto n = neighbors.size();
+
+			// printf("\n number of neightbors-> %d : ", n);
 
 			#ifdef PARALLEL_INTER
 			#pragma omp parallel for reduction(+:intere,electroe,pxx,pxy,pyy) if(n >= MIN_INTER_NEIGH)
@@ -272,6 +274,8 @@ namespace SAPHRON
 				pxx += totalvirial * rij[0] * rab[0];
 				pyy += totalvirial * rij[1] * rab[1];
 				pxy += totalvirial * 0.5 * (rij[0] * rab[1] + rij[1] * rab[0]);			
+
+				// printf(" %f ", interij.energy);
 			}
 		}
 		EPTuple ep{intere, 0, electroe, 0, 0, 0, 0, 0, recipro, 0, -pxx, -pxy, -pyy, 0};				
@@ -509,7 +513,11 @@ namespace SAPHRON
 	void ForceFieldManager::UpdateConstraint(const int iter)
 	{
 		for(auto& c : _constraints[0])
-			c->UpdateConstraint(iter);
+		{
+			//printf("here   ");
+			c->UpdateConstraint(iter, _A, _T, _lim);
+		}
+		// printf("\n");
 	}
 
 	void ForceFieldManager::UpdateCoeff(const int iter)

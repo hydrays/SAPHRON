@@ -6,6 +6,8 @@
 #include "../Worlds/World.h"
 #include <armadillo>
 
+using namespace arma;
+
 namespace SAPHRON
 {
 	// Class for applying periodic potential
@@ -16,7 +18,7 @@ namespace SAPHRON
 		double _coeff; 
 
 		// Preferred direction.
-		Director _dir;
+		Director _pvec;
 
 		// Index of dimension for restriction region.
 		int _index;
@@ -32,19 +34,11 @@ namespace SAPHRON
 		// Is a position inside the restriction region?
 		bool IsInRegion(const Position& pos)
 		{
-			switch(_index)
-			{
-				case 0:
-					if(pos[0] < _lim[0] || pos[0] > _lim[1])
-						return false;
-					break;
-				default:
-					if(pos[1] < _lim[0] || pos[1] > _lim[1])
-						return false;
-					break;
-			}
-
-			return true;
+			if(pos[0] < _lim[0] || pos[0] > _lim[1]
+				|| pos[1] < _lim[0] || pos[1] > _lim[1])
+				return false;
+			else
+				return true;
 		}
 
 	public:
@@ -60,12 +54,13 @@ namespace SAPHRON
 			Director dir, 
 			int index, 
 			const std::array<double, 2> lim) : 
-		Constraint(world), _coeff(coeff), _dir(dir), _index(index), 
+		Constraint(world), _coeff(coeff), _pvec(dir), _index(index), 
 		_lim(lim), _pcount(0), _potential(0)
 		{
-			using namespace arma;
+			_pvec[0] = 1.0;
+			_pvec[1] = 1.0;
+			_pvec = _pvec/fnorm(_pvec);
 
-			_dir = _dir/fnorm(_dir);
 			// Go through world particles and observe.
 			for(auto& p : *world)
 			{
@@ -73,7 +68,7 @@ namespace SAPHRON
 				if(IsInRegion(p->GetPosition()))
 				{
 					auto& u = p->GetDirector();
-					_potential += fdot(u, _dir)*fdot(u, _dir);
+					_potential += fdot(u, _pvec)*fdot(u, _pvec);
 				}
 			}
 		}
@@ -91,8 +86,6 @@ namespace SAPHRON
 		
 		void ParticleUpdate(const ParticleEvent& pEvent) override
 		{
-			using namespace arma;
-
 			// Get particle and positions, directors.
 			auto* p = pEvent.GetParticle();
 			auto& pos = p->GetPosition();
@@ -103,7 +96,7 @@ namespace SAPHRON
 			if(pEvent.director && IsInRegion(pos))
 			{
 				auto& pdir = pEvent.GetOldDirector();
-				_potential += fdot(dir,_dir)*fdot(dir,_dir) - fdot(pdir,_dir)*fdot(pdir,_dir);
+				_potential += fdot(dir,_pvec)*fdot(dir,_pvec) - fdot(pdir,_pvec)*fdot(pdir,_pvec);
 				return;
 			}
 			else if(pEvent.position)
@@ -117,25 +110,41 @@ namespace SAPHRON
 				// 3. Particle previously in region but now not in region.
 				if(!IsInRegion(ppos) && IsInRegion(pos))
 				{
-					_potential += fdot(dir,_dir)*fdot(dir,_dir);
+					_potential += fdot(dir,_pvec)*fdot(dir,_pvec);
 				}
 				else if(IsInRegion(ppos) && !IsInRegion(pos))
 				{
-					_potential -= fdot(dir,_dir)*fdot(dir,_dir);
+					_potential -= fdot(dir,_pvec)*fdot(dir,_pvec);
 				}
 			}			
 		}
 
-		void UpdateConstraint(const int iter)
-		{			
-			if ( iter % 2000 == 0 )
+		void UpdateConstraint(const int iter, 
+			const double A, const double T, const std::array<double, 2> lim)
+		{	
+			// _coeff = A * sin(2.0*M_PI*double(iter)/T);
+			// _lim[0] = lim[0];
+			// _lim[1] = lim[1];
+
+			// _potential = 0.0;
+			// Go through world particles and observe.
+			// for(auto& p : world)
+			// {
+			// 	//p->AddObserver(this);
+			// 	if(IsInRegion(p->GetPosition()))
+			// 	{
+			// 		auto& u = p->GetDirector();
+			// 		_potential += fdot(u, _pvec)*fdot(u, _pvec);
+			// 	}
+			// }			
+			if ( iter % int(T) == 0 )
 			{
-				printf("UpdateConstraint at iter = %d", iter);
+			printf("UpdateConstraint at iter = %d, %f \n", iter, _coeff);
 				Director newdir;
-				newdir[0] = -_dir[1];
-				newdir[1] = _dir[0];
-				_dir[0] = newdir[0];
-				_dir[1] = newdir[1];
+				newdir[0] = -_pvec[1];
+				newdir[1] = _pvec[0];
+				_pvec[0] = newdir[0];
+				_pvec[1] = newdir[1];
 			}
 		}
 
@@ -165,7 +174,7 @@ namespace SAPHRON
 			    }
 			    else
 			    {
-				vec = _dir;
+				vec = _pvec;
 				change_flag = 1;
 			    }
 			    if (change_flag==1)
@@ -201,8 +210,8 @@ namespace SAPHRON
 		{
 			json["type"] = "PeriodicPotential";
 			json["coefficient"] = _coeff;
-			json["director"][0] = _dir[0];
-			json["director"][1] = _dir[1];
+			json["director"][0] = _pvec[0];
+			json["director"][1] = _pvec[1];
 			json["director"][2] = 0.0;
 			json["index"] = _index;
 			json["limits"][0] = _lim[0];

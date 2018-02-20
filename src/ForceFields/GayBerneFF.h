@@ -94,7 +94,7 @@ namespace SAPHRON
 			// negative.
 			if(R < 0)
 			{
-				//printf("inside GayBerne->Evaluate: unphysical value R=%f, r=%f\n", R, r);
+				printf("inside GayBerne->Evaluate: unphysical value R=%f, r=%f\n", R, r);
 				// return {1.0e10/std::abs(r), 0};
 				return {1.0e6/std::abs(r), 0};
 			}
@@ -135,7 +135,7 @@ namespace SAPHRON
 
 			auto sig3 = sig*sig*sig;
 			auto sig03 = _sig0*_sig0*_sig0;
-			auto pref1 = 8.0 * eps * _mu * (R12 - R6) / (eps2 * r);
+			auto pref1 = - 8.0 * eps * _mu * (R12 - R6) / (eps2 * r);
 			auto pref2 = 8.0 * eps * sig3 * (6.0*R13 - 3.0*R7) / (_dw * r * sig03);
 	
 			auto dUda = pref1 * (_Xpapsq*uirij - _Xpsq*ujrij*uiuj) / (1.0 - _Xpsq*uiuj*uiuj) +
@@ -150,14 +150,14 @@ namespace SAPHRON
 			auto uxu = ui[0]*uj[1] - ui[1]*uj[0];
 
 			//ep.energy = 4.0*eps*(pow(R, 12.) - pow(R, 6.));
-			torque = (dUda * rxu - dUdg * uxu);
+			torque = ( dUda * rxu - dUdg * uxu );
 
 			// Another check for unphysicalness. R is an approximation 
 			// of the surface to surface distance. It should never be 
 			// negative.
 			if(R < 0)
 			{
-				//printf("inside GayBerne->Evaluate: unphysical value R=%f, r=%f\n", R, r);
+				printf("inside GayBerne->Evaluate: unphysical value R=%f, r=%f\n", R, r);
 				// return {1.0e10/std::abs(r), 0};
 				return 0.0;
 			}

@@ -55,7 +55,10 @@ namespace SAPHRON
 
 		virtual ~Constraint(){}
 
+		virtual void  UpdateConstraint(const int iter, const double A, const double T, const std::array<double, 2> lim) {}
+
 		virtual void UpdateConstraint(const int iter) {}
+
 		virtual void ConstraintMove(World& world) {}
 	};
 }

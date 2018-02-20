@@ -24,7 +24,7 @@ namespace SAPHRON
 
 		// Build rotation matrix. 
 		return {{ cpsi, -spsi},
-				{spsi, cpsi}};
+				{ spsi, cpsi}};
 	}
 
 	// Retrieves the contents of a file and returns them
