@@ -201,7 +201,7 @@ namespace SAPHRON
 							 ForceFieldManager* ffm)
 		{
 
-			double dt = 1e-3;
+			double dt = 1e-2;
 			// Get random particle from random world.
 			World* world = wm->GetWorld(0);
 
@@ -210,9 +210,10 @@ namespace SAPHRON
 			{
 				auto& dir = particle->GetDirector();
 				auto deg_drift = dt*ffm->EvaluateTorque(*particle);
-				double deg_noise = dt*(2.0*_rand.doub() - 1.0)*world->GetTemperature();
-
-				//printf("inside RotateMove->Integrator: deg_drift = %f, deg_noise = %f\n", deg_drift, deg_noise);
+				double deg_noise = dt*_rand.gauss()*world->GetTemperature();
+				//printf("%f \n", _rand.gauss());
+				//printf("inside RotateMove->Integrator: deg_drift = %f, deg_noise = %f, gauss = %f\n",
+				//       deg_drift, deg_noise, _rand.gauss());
 				Matrix2D R = GenRotationMatrix(deg_drift + deg_noise);
 				Rotate(particle, R);
 			}

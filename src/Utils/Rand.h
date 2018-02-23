@@ -1,31 +1,38 @@
 #pragma once
 
-#include "../include/prng_engine.h"
+
+static std::random_device rd;
+static std::mt19937 gen{rd()};
+static std::uniform_real_distribution<> runif{0.0, 1.0};
+static std::normal_distribution<> rnorm{0.0, 1.0};
+static std::uniform_int_distribution<> rid{1, 32767};
 
 class Rand
 {
-	private:
-		sitmo::prng_engine rand;
+public:
+    
+    Rand(unsigned int i = 0)
+    {
+	gen.seed(i);
+    }
 
-	public:
+    double doub()
+    {
+	return runif(gen);
+    }
 
-		Rand(unsigned int i = 0)
-		{
-			rand.seed(i);
-		}
+    double gauss()
+    {
+	return rnorm(gen);
+    }
 
-		double doub()
-		{
-			return 2.32830643653869628906e-010 * int32();
-		}
-
-		unsigned int int32()
-		{
-			return (unsigned int) rand();
-		}
-
-		void seed(int i)
-		{
-			return rand.seed(i);
-		}
+    unsigned int int32()
+    {
+	return (unsigned int) rid(gen);
+    }
+    
+    void seed(int i)
+    {
+	return gen.seed(i);
+    }
 };
