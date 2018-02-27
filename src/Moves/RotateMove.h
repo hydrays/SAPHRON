@@ -210,7 +210,7 @@ namespace SAPHRON
 			{
 				auto& dir = particle->GetDirector();
 				auto deg_drift = dt*ffm->EvaluateTorque(*particle);
-				double deg_noise = dt*_rand.gauss()*world->GetTemperature();
+				double deg_noise = sqrt(2.0*dt*world->GetTemperature())*_rand.gauss();
 				//printf("%f \n", _rand.gauss());
 				//printf("inside RotateMove->Integrator: deg_drift = %f, deg_noise = %f, gauss = %f\n",
 				//       deg_drift, deg_noise, _rand.gauss());
