@@ -147,7 +147,7 @@ namespace SAPHRON
 		void ConstraintMove(World& world)
 		{
 			//printf("ConstraintMove for PlanarSquare. \n");
-			double dt = 1e-3;
+			double dt = 1e-2;
 			Director vec;
 			double dr = 0.0;
 			int change_flag;
