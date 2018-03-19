@@ -6,7 +6,7 @@
     }
   },
   "forcefields": {
-    "A": 2,
+    "A": 0.01,
     "T": 50000,
     "lim": [
       0.5,
@@ -14,7 +14,7 @@
     ],
     "constraints": [
       {
-        "coefficient": 200,
+        "coefficient": 5,
         "director": [
           1,
           0,
@@ -32,7 +32,7 @@
     "nonbonded": [
       {
         "gamma": 0,
-        "epsilon": 1.5,
+        "epsilon": 0.5,
         "species": [
           "L1",
           "L1"
@@ -41,7 +41,7 @@
       }
     ]
   },
-  "iterations": 200000,
+  "iterations": 1000000,
   "moves": [
     {
       "maxangle": 0.2,
@@ -63,7 +63,7 @@
         "simulation": 1,
         "world": 1
       },
-      "frequency": 1000,
+      "frequency": 2500,
       "prefix": "out.sys1",
       "type": "DLMFile"
     },
@@ -75,12 +75,12 @@
       "flags": {
         "histogram": 1
       },
-      "frequency": 1000,
+      "frequency": 2500,
       "prefix": "dos4",
       "type": "DLMFile"
     },
     {
-      "frequency": 1000,
+      "frequency": 2500,
       "prefix": "out.sys1.chkpt",
       "type": "JSON"
     }
@@ -3835,7 +3835,7 @@
         "z": false
       },
       "skin_thickness": 0,
-      "temperature": 50,
+      "temperature": 1,
       "type": "Simple"
     }
   ]
