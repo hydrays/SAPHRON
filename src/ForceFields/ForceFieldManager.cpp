@@ -267,6 +267,19 @@ namespace SAPHRON
 					electroij = _electroff->Evaluate(particle, *neighbor, rij, wid);
 				
 				intere += interij.energy; // Sum nonbonded van der Waal energy.
+
+		//add external potential here
+		auto& dir = particle.GetDirector();
+		auto& pos = particle.GetPosition();
+		if ((pos[0] > _lim[0]) && 
+			(pos[0] < _lim[1]) &&
+			(pos[1] > _lim[0]) &&
+			(pos[1] < _lim[1]))
+		{
+		    intere += -0.5*_coeff*fdot(dir,_pvec)*fdot(dir,_pvec);
+		}
+				
+
 				electroe += electroij.energy; // Sum electrostatic energy
 
 				auto totalvirial = interij.virial + electroij.virial;
@@ -522,7 +535,15 @@ namespace SAPHRON
 
 	void ForceFieldManager::UpdateCoeff(const int iter)
 	{
-		_coeff = _A * sin(_prefactor*double(iter));
+	    _coeff = _A * sin(_prefactor*double(iter));
+	    // if ( iter < 10000 )
+	    // {
+	    // 	_coeff = _A;
+	    // }
+	    // else
+	    // {
+	    // 	_coeff = -_A;
+	    // }
 	}
 
 	void ForceFieldManager::ConstraintMove(World& world)

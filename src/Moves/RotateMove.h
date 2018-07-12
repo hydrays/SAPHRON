@@ -217,6 +217,11 @@ namespace SAPHRON
 				Matrix2D R = GenRotationMatrix(deg_drift + deg_noise);
 				Rotate(particle, R);
 			}
+			auto ep = ffm->EvaluateInterEnergy(*world);
+			ep.energy.constraint = ffm->EvaluateConstraintEnergy(*world);
+			Energy e = ep.energy;
+			world->SetEnergy(e);
+			
     		// calcForce();
 			// ffm.calcForce();
     		// moveB();
